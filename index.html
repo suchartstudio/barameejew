@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ป้ายราคาทอง - บารมี แอนติกจิวเวลรี่</title>
     <!-- โหลด Font Bai Jamjuree จาก Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ตั้งค่าพื้นฐานและการจัดวางสำหรับจอ 1920x1080 */
         :root {
@@ -28,16 +28,18 @@
             flex-direction: column;
         }
 
-        /* ส่วนหัว (Header) */
+        /* ส่วนหัว (Header) - ปรับให้ใหญ่และหนาขึ้น */
         header {
-            height: 12vh;
+            height: 13vh;
             background-color: var(--bg-red);
             color: var(--text-yellow);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 5vh;
-            font-weight: 700;
+            font-size: 7vh; /* ขยายขนาดใหญ่ขึ้น */
+            font-weight: 800; /* หนาพิเศษ */
+            letter-spacing: 2px;
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.4); /* เพิ่มเงาให้ตัวหนังสือลอยเด่น */
             border-bottom: 5px solid var(--text-yellow);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 10;
@@ -87,7 +89,7 @@
         .card-header {
             background-color: var(--text-black);
             color: var(--text-yellow);
-            font-size: 4.5vh;
+            font-size: 5vh;
             font-weight: 700;
             text-align: center;
             padding: 1.5vh 0;
@@ -106,18 +108,20 @@
         }
 
         .price-label {
-            font-size: 3.5vh;
+            font-size: 4vh;
             color: var(--text-black);
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 1vh;
             border-bottom: 3px solid #eee;
             padding-bottom: 1vh;
         }
 
+        /* ตัวเลขราคาทองหลัก - ปรับให้ใหญ่และหนาขึ้น */
         .price-value {
-            font-size: 8vh;
-            font-weight: 700;
+            font-size: 10.5vh; /* ขยายขนาดใหญ่ขึ้น */
+            font-weight: 800; /* หนาพิเศษ */
             color: var(--text-black);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         /* สไตล์หน้า 2 */
@@ -134,13 +138,15 @@
 
         .main-price-card h2 {
             margin: 0;
-            font-size: 4vh;
+            font-size: 4.5vh;
+            font-weight: 700;
             color: var(--text-black);
         }
 
+        /* ตัวเลขป้ายหลักหน้า 2 */
         .main-price-card .main-value {
-            font-size: 6vh;
-            font-weight: 700;
+            font-size: 7.5vh; /* ขยายขนาดใหญ่ขึ้น */
+            font-weight: 800; /* หนาพิเศษ */
             color: var(--text-black);
         }
 
@@ -165,43 +171,56 @@
         }
 
         .percent-title {
-            font-size: 3.5vh;
+            font-size: 4vh;
             font-weight: 700;
             margin-bottom: 0.5vh;
         }
 
+        /* ตัวเลขราคาทองเปอร์เซ็นต์ */
         .percent-value {
-            font-size: 4vh;
-            font-weight: 700;
+            font-size: 5.5vh; /* ขยายขนาดใหญ่ขึ้น */
+            font-weight: 800; /* หนาพิเศษ */
             background-color: var(--bg-white);
             color: var(--text-black);
             width: 90%;
             text-align: center;
             border-radius: 10px;
-            padding: 0.5vh 0;
+            padding: 1vh 0;
         }
 
-        /* ส่วนท้าย (Footer) */
+        /* ส่วนท้าย (Footer) ตัววิ่ง */
         footer {
-            height: 8vh;
+            height: 9vh;
             background-color: var(--bg-white);
             border-top: 5px solid var(--text-yellow);
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding: 0 3vw;
+            overflow: hidden; /* ซ่อนข้อความที่ล้นจอเพื่อทำตัววิ่ง */
         }
 
-        .update-info {
-            font-size: 3vh;
-            font-weight: 600;
-            color: var(--text-black);
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
         }
 
-        .highlight-yellow {
-            color: var(--text-yellow);
-            text-shadow: 1px 1px 2px #000;
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100vw; /* เริ่มวิ่งจากขอบจอด้านขวา */
+            animation: marquee 35s linear infinite; /* ความเร็วในการวิ่ง (ปรับวิได้) */
+            font-size: 4.5vh;
+            font-weight: 700;
+            color: var(--bg-dark-red); /* สีข้อความตัววิ่ง */
         }
+
+        /* คีย์เฟรมสำหรับทำตัววิ่ง */
+        @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
     </style>
 </head>
 <body>
@@ -254,7 +273,11 @@
     </main>
 
     <footer>
-        <div class="update-info" id="update-text">อัพเดทข้อมูลล่าสุด: --/--/---- เวลา --:-- น.</div>
+        <div class="ticker-wrap">
+            <div class="ticker" id="ticker-text">
+                กำลังอัพเดทข้อมูลล่าสุด...
+            </div>
+        </div>
     </footer>
 
     <script>
@@ -299,9 +322,11 @@
             
             percentages.forEach(percent => {
                 // สูตรคำนวณ: ราคาทองคำแท่งรับซื้อ * 0.0656 * (ทอง% / 100)
-                const calculatedPrice = barBuyNum * 0.0656 * (percent / 100);
-                // จัดฟอร์แมตตัวเลขให้มีทศนิยม 2 ตำแหน่ง พร้อมใส่ลูกน้ำ
-                const displayPrice = calculatedPrice.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                // ใช้ Math.round() เพื่อปัดเศษให้เป็นจำนวนเต็ม (ไม่มีทศนิยม)
+                const calculatedPrice = Math.round(barBuyNum * 0.0656 * (percent / 100));
+                
+                // จัดฟอร์แมตตัวเลขให้มีลูกน้ำ แต่ไม่มีทศนิยม
+                const displayPrice = calculatedPrice.toLocaleString('th-TH');
 
                 const box = document.createElement('div');
                 box.className = 'percent-box';
@@ -312,9 +337,20 @@
                 gridContainer.appendChild(box);
             });
 
-            // อัปเดต Footer วันที่และเวลา
-            const updateText = `อัพเดทข้อมูลล่าสุด: ${data.date} เวลา ${data.update_time} น.`;
-            document.getElementById('update-text').textContent = updateText;
+            // อัปเดต Footer วันที่และเวลา (แก้บัค undefined และคำซ้ำ)
+            let datetimeStr = "";
+            if (data.date) { datetimeStr += data.date + " "; }
+            if (data.update_time) { datetimeStr += data.update_time; }
+            
+            // ลบคำว่า "เวลา" หรือ "น." ที่อาจซ้ำซ้อนมาจาก API ให้สะอาดขึ้น
+            datetimeStr = datetimeStr.replace(/เวลา\s*เวลา/g, 'เวลา').replace(/น\.\s*น\./g, 'น.');
+
+            // กำหนดข้อความตัววิ่งโปรโมท
+            const promoMessage = " *** รับซื้อ ธนบัตรเก่า เหรียญเก่า พระทองคำ เครื่องลายคราม พดด้วง ให้ราคาสูง ถ้าคุณมีของเก่า ของสะสม อยากเปลี่ยนเป็นเงินสด ติดต่อบารมี สอบถามเพิ่มเติมได้ที่ โทร 080-226-2622 ***";
+            
+            // รวมข้อความอัพเดท กับ ข้อความโปรโมทเข้าด้วยกัน
+            const fullTickerText = `อัพเดทข้อมูลล่าสุด: ${datetimeStr} ${promoMessage}`;
+            document.getElementById('ticker-text').textContent = fullTickerText;
         }
 
         // ฟังก์ชันสลับหน้าจอ
@@ -336,7 +372,7 @@
         // เริ่มต้นการทำงานเมื่อโหลดหน้าเว็บ
         fetchGoldData(); // โหลดข้อมูลทันทีครั้งแรก
 
-        // ตั้งเวลาดึงข้อมูลใหม่ทุกๆ 5 นาที (300,000 มิลลิวินาที) เผื่อมีการอัปเดตระหว่างวัน
+        // ตั้งเวลาดึงข้อมูลใหม่ทุกๆ 5 นาที (300,000 มิลลิวินาที)
         setInterval(fetchGoldData, 300000); 
 
         // ตั้งเวลาสลับหน้าจอทุกๆ 30 วินาที (30,000 มิลลิวินาที)
