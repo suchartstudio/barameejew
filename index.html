@@ -28,7 +28,7 @@
             flex-direction: column;
         }
 
-        /* ส่วนหัว (Header) - ปรับให้ใหญ่และหนาขึ้น */
+        /* ส่วนหัว (Header) */
         header {
             height: 13vh;
             background-color: var(--bg-red);
@@ -116,7 +116,6 @@
             padding-bottom: 1vh;
         }
 
-        /* ตัวเลขราคาทองหลัก */
         .price-value {
             font-size: 10.5vh;
             font-weight: 800;
@@ -143,7 +142,6 @@
             color: var(--text-black);
         }
 
-        /* ตัวเลขป้ายหลักหน้า 2 */
         .main-price-card .main-value {
             font-size: 7.5vh;
             font-weight: 800;
@@ -176,7 +174,6 @@
             margin-bottom: 0.5vh;
         }
 
-        /* ตัวเลขราคาทองเปอร์เซ็นต์ */
         .percent-value {
             font-size: 5.5vh;
             font-weight: 800;
@@ -190,7 +187,7 @@
 
         /* ส่วนท้าย (Footer) ตัววิ่ง */
         footer {
-            height: 10vh;
+            height: 9vh;
             background-color: var(--bg-white);
             border-top: 5px solid var(--text-yellow);
             display: flex;
@@ -203,6 +200,8 @@
             overflow: hidden;
             white-space: nowrap;
             box-sizing: border-box;
+            /* เพิ่ม Padding บน-ล่าง ให้กล่องห่อหุ้ม */
+            padding: 1vh 0;
         }
 
         .ticker {
@@ -210,9 +209,13 @@
             white-space: nowrap;
             padding-left: 100vw;
             animation: marquee 35s linear infinite;
-            font-size: 4.0vh;
-            font-weight: 800;
+            font-size: 4.5vh;
+            font-weight: 700;
             color: var(--bg-dark-red);
+            /* เพิ่ม Line-height และ Padding เพื่อป้องกันวรรณยุกต์โดนตัด */
+            line-height: 1.5;
+            padding-top: 0.5vh;
+            padding-bottom: 0.5vh;
         }
 
         /* คีย์เฟรมสำหรับทำตัววิ่ง */
@@ -263,7 +266,7 @@
         <!-- หน้าที่ 2 : ราคาเปอร์เซ็นต์ทอง -->
         <div id="screen2" class="screen">
             <div class="main-price-card">
-                <h2>ราคาทองคำแท่งรับซื้อ</h2> <!-- ตัดคำว่า (อ้างอิง) ออก -->
+                <h2>ราคาทองคำแท่งรับซื้อ</h2> 
                 <div class="main-value"><span id="main-bar-buy">กำลังโหลด...</span> บาท</div>
             </div>
             <div class="grid-container" id="percent-grid">
@@ -318,21 +321,17 @@
 
             // อัปเดตหน้า 2 (กริดเปอร์เซ็นต์)
             const gridContainer = document.getElementById('percent-grid');
-            gridContainer.innerHTML = ''; // เคลียร์ของเก่า
+            gridContainer.innerHTML = ''; 
             
             percentages.forEach(percent => {
-                // สูตรคำนวณ: ราคาทองคำแท่งรับซื้อ * 0.0656 * (ทอง% / 100)
-                // ใช้ Math.round() เพื่อปัดเศษให้เป็นจำนวนเต็ม
                 const calculatedPrice = Math.round(barBuyNum * 0.0656 * (percent / 100));
-                
-                // จัดฟอร์แมตตัวเลขให้มีลูกน้ำ แต่ไม่มีทศนิยม
                 const displayPrice = calculatedPrice.toLocaleString('th-TH');
 
                 const box = document.createElement('div');
                 box.className = 'percent-box';
                 box.innerHTML = `
                     <div class="percent-title">ทอง ${percent}%</div>
-                    <div class="percent-value">${displayPrice}</div> <!-- ตัดหน่วย ฿/กรัม ออก -->
+                    <div class="percent-value">${displayPrice}</div>
                 `;
                 gridContainer.appendChild(box);
             });
@@ -342,13 +341,10 @@
             if (data.date) { datetimeStr += data.date + " "; }
             if (data.update_time) { datetimeStr += data.update_time; }
             
-            // ลบคำว่า "เวลา" หรือ "น." ที่อาจซ้ำซ้อนมาจาก API
             datetimeStr = datetimeStr.replace(/เวลา\s*เวลา/g, 'เวลา').replace(/น\.\s*น\./g, 'น.');
 
-            // กำหนดข้อความตัววิ่งโปรโมท
-            const promoMessage = " รับซื้อ ธนบัตรเก่า เหรียญเก่า พระทองคำ เครื่องลายคราม พดด้วง ให้ราคาสูง ถ้าคุณมีของเก่า ของสะสม อยากเปลี่ยนเป็นเงินสด ติดต่อบารมี สอบถามเพิ่มเติมได้ที่ โทร 080-226-2622 ";
+            const promoMessage = " *** รับซื้อ ธนบัตรเก่า เหรียญเก่า พระทองคำ เครื่องลายคราม พดด้วง ให้ราคาสูง ถ้าคุณมีของเก่า ของสะสม อยากเปลี่ยนเป็นเงินสด ติดต่อบารมี สอบถามเพิ่มเติมได้ที่ โทร 080-226-2622 ***";
             
-            // รวมข้อความอัพเดท กับ ข้อความโปรโมทเข้าด้วยกัน
             const fullTickerText = `อัพเดทข้อมูลล่าสุด: ${datetimeStr} ${promoMessage}`;
             document.getElementById('ticker-text').textContent = fullTickerText;
         }
@@ -369,13 +365,8 @@
             }
         }
 
-        // เริ่มต้นการทำงานเมื่อโหลดหน้าเว็บ
-        fetchGoldData(); // โหลดข้อมูลทันทีครั้งแรก
-
-        // ตั้งเวลาดึงข้อมูลใหม่ทุกๆ 5 นาที (300,000 มิลลิวินาที)
+        fetchGoldData(); 
         setInterval(fetchGoldData, 300000); 
-
-        // ตั้งเวลาสลับหน้าจอทุกๆ 30 วินาที (30,000 มิลลิวินาที)
         setInterval(switchScreen, 30000);
     </script>
 </body>
