@@ -200,7 +200,6 @@
             overflow: hidden;
             white-space: nowrap;
             box-sizing: border-box;
-            /* เพิ่ม Padding บน-ล่าง ให้กล่องห่อหุ้ม */
             padding: 1vh 0;
         }
 
@@ -212,7 +211,6 @@
             font-size: 4.5vh;
             font-weight: 700;
             color: var(--bg-dark-red);
-            /* เพิ่ม Line-height และ Padding เพื่อป้องกันวรรณยุกต์โดนตัด */
             line-height: 1.5;
             padding-top: 0.5vh;
             padding-bottom: 0.5vh;
@@ -288,6 +286,15 @@
         const percentages = [90, 85, 80, 75, 70, 60, 58, 50, 40, 37, 30, 20];
         let currentScreen = 1;
 
+        // ฟังก์ชันแปลงตัวเลข/ข้อความให้เป็นจำนวนเต็มและใส่ลูกน้ำ (ลบทศนิยมออก)
+        function formatToIntegerOnly(val) {
+            if (!val) return "0";
+            // ลบลูกน้ำเดิมออก และแปลงเป็นตัวเลข
+            const num = parseFloat(String(val).replace(/,/g, ''));
+            // ใช้ Math.round ปัดเศษให้เป็นจำนวนเต็ม แล้วค่อยใส่ลูกน้ำกลับเข้าไป
+            return Math.round(num).toLocaleString('th-TH');
+        }
+
         // ฟังก์ชันดึงข้อมูลจาก API
         async function fetchGoldData() {
             try {
@@ -306,18 +313,23 @@
         function updateUI(data) {
             const priceData = data.price;
 
-            // ดึงราคาและลบลูกน้ำ (,) ออกเพื่อแปลงเป็นตัวเลขสำหรับการคำนวณ
-            const barBuyStr = priceData.gold_bar.buy;
-            const barBuyNum = parseFloat(barBuyStr.replace(/,/g, ''));
+            // นำราคาจาก API มาแปลงเป็นจำนวนเต็มทั้งหมดผ่านฟังก์ชัน formatToIntegerOnly
+            const formattedBarBuy = formatToIntegerOnly(priceData.gold_bar.buy);
+            const formattedBarSell = formatToIntegerOnly(priceData.gold_bar.sell);
+            const formattedOrnamentBuy = formatToIntegerOnly(priceData.gold.buy);
+            const formattedOrnamentSell = formatToIntegerOnly(priceData.gold.sell);
+
+            // ดึงราคารับซื้อแบบตัวเลขเพียวๆ ไว้ใช้สำหรับคำนวณ % ทองในหน้า 2
+            const barBuyNum = parseFloat(String(priceData.gold_bar.buy).replace(/,/g, ''));
 
             // อัปเดตหน้า 1
-            document.getElementById('bar-buy').textContent = barBuyStr;
-            document.getElementById('bar-sell').textContent = priceData.gold_bar.sell;
-            document.getElementById('ornament-buy').textContent = priceData.gold.buy;
-            document.getElementById('ornament-sell').textContent = priceData.gold.sell;
+            document.getElementById('bar-buy').textContent = formattedBarBuy;
+            document.getElementById('bar-sell').textContent = formattedBarSell;
+            document.getElementById('ornament-buy').textContent = formattedOrnamentBuy;
+            document.getElementById('ornament-sell').textContent = formattedOrnamentSell;
 
             // อัปเดตหน้า 2 (ป้ายหลัก)
-            document.getElementById('main-bar-buy').textContent = barBuyStr;
+            document.getElementById('main-bar-buy').textContent = formattedBarBuy;
 
             // อัปเดตหน้า 2 (กริดเปอร์เซ็นต์)
             const gridContainer = document.getElementById('percent-grid');
