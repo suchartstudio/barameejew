@@ -190,7 +190,7 @@
 
         /* ส่วนท้าย (Footer) ตัววิ่ง */
         footer {
-            height: 9vh;
+            height: 10vh;
             background-color: var(--bg-white);
             border-top: 5px solid var(--text-yellow);
             display: flex;
@@ -210,8 +210,8 @@
             white-space: nowrap;
             padding-left: 100vw;
             animation: marquee 35s linear infinite;
-            font-size: 4.5vh;
-            font-weight: 700;
+            font-size: 4.0vh;
+            font-weight: 800;
             color: var(--bg-dark-red);
         }
 
@@ -346,7 +346,7 @@
             datetimeStr = datetimeStr.replace(/เวลา\s*เวลา/g, 'เวลา').replace(/น\.\s*น\./g, 'น.');
 
             // กำหนดข้อความตัววิ่งโปรโมท
-            const promoMessage = " *** รับซื้อ ธนบัตรเก่า เหรียญเก่า พระทองคำ เครื่องลายคราม พดด้วง ให้ราคาสูง ถ้าคุณมีของเก่า ของสะสม อยากเปลี่ยนเป็นเงินสด ติดต่อบารมี สอบถามเพิ่มเติมได้ที่ โทร 080-226-2622 ***";
+            const promoMessage = " รับซื้อ ธนบัตรเก่า เหรียญเก่า พระทองคำ เครื่องลายคราม พดด้วง ให้ราคาสูง ถ้าคุณมีของเก่า ของสะสม อยากเปลี่ยนเป็นเงินสด ติดต่อบารมี สอบถามเพิ่มเติมได้ที่ โทร 080-226-2622 ";
             
             // รวมข้อความอัพเดท กับ ข้อความโปรโมทเข้าด้วยกัน
             const fullTickerText = `อัพเดทข้อมูลล่าสุด: ${datetimeStr} ${promoMessage}`;
