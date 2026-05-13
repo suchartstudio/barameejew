@@ -36,10 +36,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7vh; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 800; /* หนาพิเศษ */
+            font-size: 7vh;
+            font-weight: 800;
             letter-spacing: 2px;
-            text-shadow: 2px 3px 5px rgba(0,0,0,0.4); /* เพิ่มเงาให้ตัวหนังสือลอยเด่น */
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.4);
             border-bottom: 5px solid var(--text-yellow);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 10;
@@ -116,10 +116,10 @@
             padding-bottom: 1vh;
         }
 
-        /* ตัวเลขราคาทองหลัก - ปรับให้ใหญ่และหนาขึ้น */
+        /* ตัวเลขราคาทองหลัก */
         .price-value {
-            font-size: 10.5vh; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 800; /* หนาพิเศษ */
+            font-size: 10.5vh;
+            font-weight: 800;
             color: var(--text-black);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
@@ -145,8 +145,8 @@
 
         /* ตัวเลขป้ายหลักหน้า 2 */
         .main-price-card .main-value {
-            font-size: 7.5vh; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 800; /* หนาพิเศษ */
+            font-size: 7.5vh;
+            font-weight: 800;
             color: var(--text-black);
         }
 
@@ -178,8 +178,8 @@
 
         /* ตัวเลขราคาทองเปอร์เซ็นต์ */
         .percent-value {
-            font-size: 5.5vh; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 800; /* หนาพิเศษ */
+            font-size: 5.5vh;
+            font-weight: 800;
             background-color: var(--bg-white);
             color: var(--text-black);
             width: 90%;
@@ -195,7 +195,7 @@
             border-top: 5px solid var(--text-yellow);
             display: flex;
             align-items: center;
-            overflow: hidden; /* ซ่อนข้อความที่ล้นจอเพื่อทำตัววิ่ง */
+            overflow: hidden;
         }
 
         .ticker-wrap {
@@ -208,11 +208,11 @@
         .ticker {
             display: inline-block;
             white-space: nowrap;
-            padding-left: 100vw; /* เริ่มวิ่งจากขอบจอด้านขวา */
-            animation: marquee 35s linear infinite; /* ความเร็วในการวิ่ง (ปรับวิได้) */
+            padding-left: 100vw;
+            animation: marquee 35s linear infinite;
             font-size: 4.5vh;
             font-weight: 700;
-            color: var(--bg-dark-red); /* สีข้อความตัววิ่ง */
+            color: var(--bg-dark-red);
         }
 
         /* คีย์เฟรมสำหรับทำตัววิ่ง */
@@ -263,7 +263,7 @@
         <!-- หน้าที่ 2 : ราคาเปอร์เซ็นต์ทอง -->
         <div id="screen2" class="screen">
             <div class="main-price-card">
-                <h2>ราคาทองคำแท่งรับซื้อ (อ้างอิง)</h2>
+                <h2>ราคาทองคำแท่งรับซื้อ</h2> <!-- ตัดคำว่า (อ้างอิง) ออก -->
                 <div class="main-value"><span id="main-bar-buy">กำลังโหลด...</span> บาท</div>
             </div>
             <div class="grid-container" id="percent-grid">
@@ -322,7 +322,7 @@
             
             percentages.forEach(percent => {
                 // สูตรคำนวณ: ราคาทองคำแท่งรับซื้อ * 0.0656 * (ทอง% / 100)
-                // ใช้ Math.round() เพื่อปัดเศษให้เป็นจำนวนเต็ม (ไม่มีทศนิยม)
+                // ใช้ Math.round() เพื่อปัดเศษให้เป็นจำนวนเต็ม
                 const calculatedPrice = Math.round(barBuyNum * 0.0656 * (percent / 100));
                 
                 // จัดฟอร์แมตตัวเลขให้มีลูกน้ำ แต่ไม่มีทศนิยม
@@ -332,17 +332,17 @@
                 box.className = 'percent-box';
                 box.innerHTML = `
                     <div class="percent-title">ทอง ${percent}%</div>
-                    <div class="percent-value">${displayPrice} ฿/กรัม</div>
+                    <div class="percent-value">${displayPrice}</div> <!-- ตัดหน่วย ฿/กรัม ออก -->
                 `;
                 gridContainer.appendChild(box);
             });
 
-            // อัปเดต Footer วันที่และเวลา (แก้บัค undefined และคำซ้ำ)
+            // อัปเดต Footer วันที่และเวลา
             let datetimeStr = "";
             if (data.date) { datetimeStr += data.date + " "; }
             if (data.update_time) { datetimeStr += data.update_time; }
             
-            // ลบคำว่า "เวลา" หรือ "น." ที่อาจซ้ำซ้อนมาจาก API ให้สะอาดขึ้น
+            // ลบคำว่า "เวลา" หรือ "น." ที่อาจซ้ำซ้อนมาจาก API
             datetimeStr = datetimeStr.replace(/เวลา\s*เวลา/g, 'เวลา').replace(/น\.\s*น\./g, 'น.');
 
             // กำหนดข้อความตัววิ่งโปรโมท
