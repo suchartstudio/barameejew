@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ป้ายราคาทอง แนวตั้ง - บารมี แอนติกจิวเวลรี่</title>
-    <!-- โหลด Font Bai Jamjuree จาก Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ตั้งค่าพื้นฐานและการจัดวางสำหรับจอแนวตั้ง 1080x1920 */
@@ -30,13 +29,13 @@
 
         /* ส่วนหัว (Header) */
         header {
-            height: 10vh; /* ลดสัดส่วนความสูงลงนิดหน่อยสำหรับจอแนวตั้ง */
+            height: 10vh;
             background-color: var(--bg-red);
             color: var(--text-yellow);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7.5vw; /* ใช้ vw สำหรับจอแนวตั้ง */
+            font-size: 7.5vw;
             font-weight: 800;
             letter-spacing: 2px;
             text-shadow: 2px 3px 5px rgba(0,0,0,0.4);
@@ -58,11 +57,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            padding: 3vh 4vw; /* ปรับ padding ให้เหมาะกับแนวตั้ง */
+            /* ปรับลด Padding และช่องไฟ (Gap) ไม่ให้ดันเนื้อหาจนล้น */
+            padding: 2vh 4vw; 
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 3vh;
+            gap: 2vh; 
             opacity: 0;
             transition: opacity 1s ease-in-out;
             pointer-events: none;
@@ -91,7 +91,7 @@
         .card-header {
             background-color: var(--text-black);
             color: var(--text-yellow);
-            font-size: 6vw; /* ขนาดใหญ่ขึ้น */
+            font-size: 6vw;
             font-weight: 700;
             text-align: center;
             padding: 2vh 0;
@@ -114,15 +114,15 @@
             font-size: 5vw;
             color: var(--text-black);
             font-weight: 700;
-            margin-bottom: 1.5vh;
+            margin-bottom: 1vh;
             border-bottom: 4px solid #eee;
             padding-bottom: 1vh;
         }
 
         .price-value {
-            font-size: 11.5vw; /* ขยายตัวเลขให้เต็มตา */
+            font-size: 11.5vw;
             font-weight: 800;
-            color: var(--bg-dark-red); /* เปลี่ยนสีตัวเลขหลักให้เข้มขึ้นนิดนึงในจอตั้ง */
+            color: var(--bg-dark-red);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
@@ -131,26 +131,26 @@
            ----------------------------------- */
         .main-price-card {
             background-color: var(--bg-white);
-            border: 5px solid var(--text-yellow);
-            border-radius: 20px;
-            padding: 2.5vh 4vw;
+            border: 4px solid var(--text-yellow);
+            border-radius: 15px;
+            padding: 1.5vh 4vw; /* ย่อความสูงกรอบลง */
             display: flex;
-            flex-direction: column; /* เปลี่ยนเป็นแนวตั้งให้ตัวหนังสืออยู่บน ตัวเลขอยู่ล่าง */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            gap: 1vh;
+            gap: 0.5vh;
         }
 
         .main-price-card h2 {
             margin: 0;
-            font-size: 5vw;
+            font-size: 4.5vw; /* ย่ออักษรลงนิดนึง */
             font-weight: 700;
             color: var(--text-black);
         }
 
         .main-price-card .main-value {
-            font-size: 10vw;
+            font-size: 8vw; /* ย่อตัวเลขลงนิดนึง */
             font-weight: 800;
             color: var(--bg-dark-red);
         }
@@ -158,39 +158,39 @@
         .grid-container {
             flex: 1;
             display: grid;
-            /* ปรับเป็น 2 คอลัมน์ 6 แถว สำหรับจอแนวตั้ง */
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(6, 1fr);
-            gap: 2vh 3vw;
+            gap: 1.5vh 3vw; /* ลดระยะห่างระหว่างกรอบ */
+            min-height: 0; /* ป้องกันกล่องทะลัก */
         }
 
         .percent-box {
             background-color: var(--bg-dark-red);
-            border: 4px solid var(--text-yellow);
-            border-radius: 20px;
+            border: 3px solid var(--text-yellow);
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             color: var(--text-yellow);
         }
 
         .percent-title {
-            font-size: 5vw;
+            font-size: 4.5vw; /* ย่อไซส์เพื่อให้พ้นขอบ */
             font-weight: 700;
             margin-bottom: 0.5vh;
         }
 
         .percent-value {
-            font-size: 7vw;
+            font-size: 6vw; /* ย่อไซส์ตัวเลขลง */
             font-weight: 800;
             background-color: var(--bg-white);
             color: var(--text-black);
             width: 90%;
             text-align: center;
-            border-radius: 12px;
-            padding: 1.5vh 0;
+            border-radius: 10px;
+            padding: 0.8vh 0; /* ลดความหนาของกล่องสีขาว */
         }
 
         /* -----------------------------------
@@ -203,6 +203,8 @@
             display: flex;
             align-items: center;
             overflow: hidden;
+            position: relative;
+            z-index: 20; /* ดันให้อยู่เลเยอร์บนสุด ป้องกันโดนทับ */
         }
 
         .ticker-wrap {
@@ -218,7 +220,7 @@
             white-space: nowrap;
             padding-left: 100vw;
             animation: marquee 35s linear infinite;
-            font-size: 5vw; /* ปรับขนาดตัววิ่งให้เหมาะกับจอตั้ง */
+            font-size: 5vw;
             font-weight: 700;
             color: var(--bg-dark-red);
             line-height: 1.5;
