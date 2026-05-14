@@ -26,7 +26,6 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Bai Jamjuree', sans-serif;
-            /* ไล่สีพื้นหลังโทนม่วง */
             background: radial-gradient(circle, var(--bg-gradient-top) 0%, var(--bg-dark-purple) 100%);
             display: flex;
             flex-direction: column;
@@ -110,20 +109,22 @@
             border-bottom: 4px solid var(--bg-bright-purple);
         }
 
-        /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย */
+        /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย (ปรับเป็น บน-ล่าง) */
         .price-container {
             flex: 1;
             display: flex;
+            flex-direction: column; /* เปลี่ยนจากเรียงซ้ายขวา เป็นบนล่าง */
             align-items: center;
-            justify-content: space-around;
-            padding: 3vh 2vw; 
-            gap: 3vw;
+            justify-content: space-evenly;
+            padding: 3vh 0; 
+            gap: 3vh;
         }
 
         /* กล่องย่อยสำหรับแยก รับซื้อ/ขายออก */
         .price-box {
             text-align: center;
-            width: 48%; 
+            width: 90%;  /* ขยายความกว้างให้เกือบเต็มการ์ด */
+            height: 45%; /* แบ่งความสูงกันกล่องละครึ่ง */
             background-color: var(--bg-white);
             border: 6px solid var(--bg-dark-purple);
             border-radius: 25px;
@@ -131,28 +132,17 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            height: 95%; /* ขยายความสูงกล่องราคา */
             justify-content: center;
         }
 
-        /* เปลี่ยนสีกรอบกล่องขายออกเป็นสีดำ */
-        .price-box.sell-box {
-            border-color: var(--text-black);
-        }
-
-        /* หัวข้อ รับซื้อ/ขายออก ภายในกล่องย่อย */
+        /* หัวข้อ รับซื้อ/ขายออก ภายในกล่องย่อย (สีม่วงทั้งคู่) */
         .price-label {
-            font-size: 6.5vw;
+            font-size: 7vw; /* ปรับขนาดตัวอักษรหัวกล่องย่อย */
             color: var(--text-white);
             background-color: var(--bg-dark-purple);
             font-weight: 700;
             padding: 2.5vh 0;
             margin: 0;
-        }
-
-        /* สีหัวกล่องขายออกเป็นสีดำ */
-        .price-box.sell-box .price-label {
-            background-color: var(--text-black);
         }
 
         /* ตัวเลขราคาในกล่องย่อย */
@@ -161,10 +151,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14vw; /* ขยายตัวเลขให้ใหญ่สะใจ */
+            font-size: 15vw; /* ขยายตัวเลขให้ใหญ่ขึ้นเต็มตากว่าเดิม */
             font-weight: 800;
             color: var(--text-black);
-            padding: 2vh 0;
+            padding: 1vh 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -194,7 +184,7 @@
         .main-price-card .main-value {
             font-size: 9vw; 
             font-weight: 800;
-            color: var(--bg-dark-purple); /* ตัวเลขหลักสีม่วงเข้ม */
+            color: var(--bg-dark-purple); 
         }
 
         .grid-container {
@@ -274,8 +264,8 @@
             animation: marquee 35s linear infinite;
             font-size: 5.5vw;
             font-weight: 700;
-            color: var(--text-white); /* เปลี่ยนตัวอักษรเป็นสีขาว */
-            text-shadow: 0 0 5px var(--bg-bright-purple); /* เพิ่มเรืองแสงสีม่วงสว่าง */
+            color: var(--text-white); 
+            text-shadow: 0 0 5px var(--bg-bright-purple); 
             line-height: 1.5;
             padding-top: 0.5vh;
             padding-bottom: 0.5vh;
@@ -295,18 +285,18 @@
     </header>
 
     <main>
-        <!-- หน้าที่ 1 : ราคาทองคำแท่ง (เหลือแค่นี้) -->
+        <!-- หน้าที่ 1 : ราคาทองคำแท่ง -->
         <div id="screen1" class="screen active">
             <div class="card">
                 <div class="card-header">ราคาทองคำแท่ง (บาทละ)</div>
                 <div class="price-container">
-                    <!-- กล่องรับซื้อ -->
+                    <!-- กล่องรับซื้อคืน (บน) -->
                     <div class="price-box">
                         <div class="price-label">รับซื้อคืน</div>
                         <div class="price-value" id="bar-buy">กำลังโหลด...</div>
                     </div>
-                    <!-- กล่องขายออก -->
-                    <div class="price-box sell-box">
+                    <!-- กล่องขายออก (ล่าง) -->
+                    <div class="price-box">
                         <div class="price-label">ขายออก</div>
                         <div class="price-value" id="bar-sell">กำลังโหลด...</div>
                     </div>
