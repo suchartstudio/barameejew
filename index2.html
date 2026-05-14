@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ป้ายราคาทอง แนวตั้ง - โทนม่วง</title>
+    <title>ป้ายราคาทอง แนวตั้ง - โทนม่วง (หัวแดง)</title>
     <!-- โหลด Font Bai Jamjuree จาก Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* -----------------------------------
-           ตั้งค่าโทนสี: ม่วงเข้ม ม่วงสว่าง ขาว ดำ 
+           ตั้งค่าโทนสี: ม่วงเข้ม ม่วงสว่าง ขาว ดำ แดง เหลือง
            ----------------------------------- */
         :root {
             --bg-dark-purple: #4a148c;   /* ม่วงเข้ม */
@@ -17,6 +17,8 @@
             --text-white: #ffffff;       /* ขาว */
             --text-black: #111111;       /* ดำ */
             --bg-white: #ffffff;         /* พื้นหลังขาว */
+            --bg-red: #c62828;           /* แดง (สำหรับหัวข้อ) */
+            --text-yellow: #ffeb3b;      /* เหลือง (สำหรับข้อความหัวข้อ) */
         }
 
         body {
@@ -91,7 +93,7 @@
             background-color: var(--bg-white);
             border: 6px solid var(--bg-bright-purple);
             border-radius: 30px;
-            flex: 1; /* ใช้ flex: 1 เพื่อให้การ์ดขยายเต็มพื้นที่อย่างสมดุล */
+            flex: 1; 
             display: flex;
             flex-direction: column;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
@@ -99,13 +101,13 @@
         }
 
         .card-header {
-            background-color: var(--text-black);
-            color: var(--bg-bright-purple);
+            background-color: var(--bg-red); /* เปลี่ยนเป็นสีแดง */
+            color: var(--text-yellow);       /* เปลี่ยนเป็นสีเหลือง */
             font-size: 8vw; 
             font-weight: 800;
             text-align: center;
             padding: 3vh 0;
-            border-bottom: 4px solid var(--bg-bright-purple);
+            border-bottom: 4px solid var(--text-yellow); /* ปรับขอบล่างเป็นสีเหลืองให้เข้ากัน */
         }
 
         /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย */
@@ -115,14 +117,14 @@
             flex-direction: column; 
             align-items: center;
             padding: 3vh 0; 
-            gap: 3vh; /* ระยะห่างระหว่างกล่องบน-ล่าง */
+            gap: 3vh; 
         }
 
         /* กล่องย่อยสำหรับแยก รับซื้อ/ขายออก */
         .price-box {
             text-align: center;
             width: 90%;  
-            flex: 1; /* ใช้ flex: 1 เพื่อให้ความสูง 2 กล่องแบ่งกันคนละครึ่งเป๊ะๆ ไม่มีล้นจอ */
+            flex: 1; 
             background-color: var(--bg-white);
             border: 6px solid var(--bg-dark-purple);
             border-radius: 25px;
