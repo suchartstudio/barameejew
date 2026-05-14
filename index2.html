@@ -25,6 +25,7 @@
             background: radial-gradient(circle, var(--bg-red) 0%, var(--bg-dark-red) 100%);
             display: flex;
             flex-direction: column;
+            position: relative; 
         }
 
         /* ส่วนหัว (Header) */
@@ -57,7 +58,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* ปรับลด Padding และช่องไฟ (Gap) ไม่ให้ดันเนื้อหาจนล้น */
             padding: 2vh 4vw; 
             box-sizing: border-box;
             display: flex;
@@ -72,6 +72,11 @@
             opacity: 1;
             pointer-events: auto;
             z-index: 5;
+        }
+
+        /* เผื่อพื้นที่ด้านล่างให้หน้า 1 ไม่ให้โดนตัววิ่งบัง */
+        #screen1 {
+            padding-bottom: 10vh; 
         }
 
         /* -----------------------------------
@@ -97,33 +102,60 @@
             padding: 2vh 0;
         }
 
+        /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย */
         .price-container {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: space-around;
-            padding: 2vh 0;
+            padding: 2vh 2vw; /* เพิ่ม padding ให้อยู่ห่างจากขอบการ์ดหลัก */
+            gap: 2vw;
         }
 
+        /* กล่องย่อยสำหรับแยก รับซื้อ/ขายออก ให้ชัดเจน */
         .price-box {
             text-align: center;
-            width: 45%;
+            width: 48%; /* ขยายให้พอดีกับพื้นที่ */
+            background-color: var(--bg-white);
+            border: 5px solid var(--bg-dark-red);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            height: 90%; /* ให้กล่องสูงเกือบเต็มพื้นที่ */
+            justify-content: center;
         }
 
+        /* เปลี่ยนสีกรอบกล่องขายออกเป็นสีดำให้ต่างกัน */
+        .price-box.sell-box {
+            border-color: var(--text-black);
+        }
+
+        /* หัวข้อ รับซื้อ/ขายออก ภายในกล่องย่อย */
         .price-label {
             font-size: 5vw;
-            color: var(--text-black);
+            color: var(--text-yellow);
+            background-color: var(--bg-dark-red);
             font-weight: 700;
-            margin-bottom: 1vh;
-            border-bottom: 4px solid #eee;
-            padding-bottom: 1vh;
+            padding: 1.5vh 0;
+            margin: 0;
         }
 
+        .price-box.sell-box .price-label {
+            background-color: var(--text-black);
+        }
+
+        /* ตัวเลขราคาในกล่องย่อย */
         .price-value {
-            font-size: 11.5vw;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5vw;
             font-weight: 800;
-            color: var(--bg-dark-red);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            color: var(--text-black);
+            padding: 2vh 0;
         }
 
         /* -----------------------------------
@@ -131,26 +163,26 @@
            ----------------------------------- */
         .main-price-card {
             background-color: var(--bg-white);
-            border: 4px solid var(--text-yellow);
+            border: 5px solid var(--text-yellow);
             border-radius: 15px;
-            padding: 1.5vh 4vw; /* ย่อความสูงกรอบลง */
+            padding: 2vh 4vw; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            gap: 0.5vh;
+            gap: 1vh;
         }
 
         .main-price-card h2 {
             margin: 0;
-            font-size: 4.5vw; /* ย่ออักษรลงนิดนึง */
+            font-size: 5vw; 
             font-weight: 700;
             color: var(--text-black);
         }
 
         .main-price-card .main-value {
-            font-size: 8vw; /* ย่อตัวเลขลงนิดนึง */
+            font-size: 9.5vw; 
             font-weight: 800;
             color: var(--bg-dark-red);
         }
@@ -160,13 +192,13 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(6, 1fr);
-            gap: 1.5vh 3vw; /* ลดระยะห่างระหว่างกรอบ */
-            min-height: 0; /* ป้องกันกล่องทะลัก */
+            gap: 2vh 3vw; 
+            min-height: 0;
         }
 
         .percent-box {
             background-color: var(--bg-dark-red);
-            border: 3px solid var(--text-yellow);
+            border: 4px solid var(--text-yellow);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
@@ -177,20 +209,20 @@
         }
 
         .percent-title {
-            font-size: 4.5vw; /* ย่อไซส์เพื่อให้พ้นขอบ */
+            font-size: 5vw; 
             font-weight: 700;
             margin-bottom: 0.5vh;
         }
 
         .percent-value {
-            font-size: 6vw; /* ย่อไซส์ตัวเลขลง */
+            font-size: 6.5vw; 
             font-weight: 800;
             background-color: var(--bg-white);
             color: var(--text-black);
             width: 90%;
             text-align: center;
             border-radius: 10px;
-            padding: 0.8vh 0; /* ลดความหนาของกล่องสีขาว */
+            padding: 1vh 0; 
         }
 
         /* -----------------------------------
@@ -198,13 +230,22 @@
            ----------------------------------- */
         footer {
             height: 8vh;
-            background-color: var(--bg-white);
+            background-color: var(--text-black); /* เปลี่ยนพื้นเป็นสีดำ */
             border-top: 5px solid var(--text-yellow);
             display: flex;
             align-items: center;
             overflow: hidden;
-            position: relative;
-            z-index: 20; /* ดันให้อยู่เลเยอร์บนสุด ป้องกันโดนทับ */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 20; 
+            transition: opacity 1s ease-in-out; 
+        }
+
+        footer.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .ticker-wrap {
@@ -222,7 +263,7 @@
             animation: marquee 35s linear infinite;
             font-size: 5vw;
             font-weight: 700;
-            color: var(--bg-dark-red);
+            color: var(--text-yellow); /* เปลี่ยนตัวหนังสือเป็นสีเหลือง */
             line-height: 1.5;
             padding-top: 0.5vh;
             padding-bottom: 0.5vh;
@@ -247,11 +288,13 @@
             <div class="card">
                 <div class="card-header">ราคาทองคำแท่ง (บาทละ)</div>
                 <div class="price-container">
+                    <!-- กล่องรับซื้อ -->
                     <div class="price-box">
                         <div class="price-label">รับซื้อคืน</div>
                         <div class="price-value" id="bar-buy">กำลังโหลด...</div>
                     </div>
-                    <div class="price-box">
+                    <!-- กล่องขายออก (เพิ่มคลาส sell-box) -->
+                    <div class="price-box sell-box">
                         <div class="price-label">ขายออก</div>
                         <div class="price-value" id="bar-sell">กำลังโหลด...</div>
                     </div>
@@ -260,11 +303,13 @@
             <div class="card">
                 <div class="card-header">ราคาทองรูปพรรณ (บาทละ)</div>
                 <div class="price-container">
+                    <!-- กล่องรับซื้อ -->
                     <div class="price-box">
                         <div class="price-label">รับซื้อคืน</div>
                         <div class="price-value" id="ornament-buy">กำลังโหลด...</div>
                     </div>
-                    <div class="price-box">
+                    <!-- กล่องขายออก (เพิ่มคลาส sell-box) -->
+                    <div class="price-box sell-box">
                         <div class="price-label">ขายออก</div>
                         <div class="price-value" id="ornament-sell">กำลังโหลด...</div>
                     </div>
@@ -284,7 +329,8 @@
         </div>
     </main>
 
-    <footer>
+    <!-- Footer ตัววิ่ง -->
+    <footer id="site-footer">
         <div class="ticker-wrap">
             <div class="ticker" id="ticker-text">
                 กำลังอัพเดทข้อมูลล่าสุด...
@@ -297,7 +343,7 @@
         const percentages = [90, 85, 80, 75, 70, 60, 58, 50, 40, 37, 30, 20];
         let currentScreen = 1;
 
-        // ฟังก์ชันแปลงตัวเลข/ข้อความให้เป็นจำนวนเต็มและใส่ลูกน้ำ
+        // ฟังก์ชันแปลงตัวเลขให้เป็นจำนวนเต็มและใส่ลูกน้ำ
         function formatToIntegerOnly(val) {
             if (!val) return "0";
             const num = parseFloat(String(val).replace(/,/g, ''));
@@ -327,11 +373,13 @@
 
             const barBuyNum = parseFloat(String(priceData.gold_bar.buy).replace(/,/g, ''));
 
+            // อัพเดทหน้า 1
             document.getElementById('bar-buy').textContent = formattedBarBuy;
             document.getElementById('bar-sell').textContent = formattedBarSell;
             document.getElementById('ornament-buy').textContent = formattedOrnamentBuy;
             document.getElementById('ornament-sell').textContent = formattedOrnamentSell;
 
+            // อัพเดทหน้า 2
             document.getElementById('main-bar-buy').textContent = formattedBarBuy;
 
             const gridContainer = document.getElementById('percent-grid');
@@ -350,6 +398,7 @@
                 gridContainer.appendChild(box);
             });
 
+            // อัพเดทตัววิ่ง
             let datetimeStr = "";
             if (data.date) { datetimeStr += data.date + " "; }
             if (data.update_time) { datetimeStr += data.update_time; }
@@ -365,14 +414,17 @@
         function switchScreen() {
             const screen1 = document.getElementById('screen1');
             const screen2 = document.getElementById('screen2');
+            const footer = document.getElementById('site-footer');
 
             if (currentScreen === 1) {
                 screen1.classList.remove('active');
                 screen2.classList.add('active');
+                footer.classList.add('hidden');
                 currentScreen = 2;
             } else {
                 screen2.classList.remove('active');
                 screen1.classList.add('active');
+                footer.classList.remove('hidden');
                 currentScreen = 1;
             }
         }
