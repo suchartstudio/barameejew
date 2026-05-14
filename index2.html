@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* -----------------------------------
-           ตั้งค่าโทนสีใหม่: ม่วงเข้ม ม่วงสว่าง ขาว ดำ 
+           ตั้งค่าโทนสี: ม่วงเข้ม ม่วงสว่าง ขาว ดำ 
            ----------------------------------- */
         :root {
             --bg-dark-purple: #4a148c;   /* ม่วงเข้ม */
@@ -81,8 +81,7 @@
 
         /* เผื่อพื้นที่ด้านล่างให้หน้า 1 ไม่โดนตัววิ่งบัง */
         #screen1 {
-            padding-bottom: 10vh; 
-            justify-content: center; /* จัดให้อยู่กึ่งกลางหน้าจอ */
+            padding-bottom: 11vh; 
         }
 
         /* -----------------------------------
@@ -92,7 +91,7 @@
             background-color: var(--bg-white);
             border: 6px solid var(--bg-bright-purple);
             border-radius: 30px;
-            height: 80%; /* ขยายความสูงของการ์ดให้เต็มตา */
+            flex: 1; /* ใช้ flex: 1 เพื่อให้การ์ดขยายเต็มพื้นที่อย่างสมดุล */
             display: flex;
             flex-direction: column;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
@@ -102,29 +101,28 @@
         .card-header {
             background-color: var(--text-black);
             color: var(--bg-bright-purple);
-            font-size: 8vw; /* ขยายตัวอักษรหัวข้อ */
+            font-size: 8vw; 
             font-weight: 800;
             text-align: center;
             padding: 3vh 0;
             border-bottom: 4px solid var(--bg-bright-purple);
         }
 
-        /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย (ปรับเป็น บน-ล่าง) */
+        /* คอนเทนเนอร์สำหรับจัดวางกล่องซื้อ-ขาย */
         .price-container {
             flex: 1;
             display: flex;
-            flex-direction: column; /* เปลี่ยนจากเรียงซ้ายขวา เป็นบนล่าง */
+            flex-direction: column; 
             align-items: center;
-            justify-content: space-evenly;
             padding: 3vh 0; 
-            gap: 3vh;
+            gap: 3vh; /* ระยะห่างระหว่างกล่องบน-ล่าง */
         }
 
         /* กล่องย่อยสำหรับแยก รับซื้อ/ขายออก */
         .price-box {
             text-align: center;
-            width: 90%;  /* ขยายความกว้างให้เกือบเต็มการ์ด */
-            height: 45%; /* แบ่งความสูงกันกล่องละครึ่ง */
+            width: 90%;  
+            flex: 1; /* ใช้ flex: 1 เพื่อให้ความสูง 2 กล่องแบ่งกันคนละครึ่งเป๊ะๆ ไม่มีล้นจอ */
             background-color: var(--bg-white);
             border: 6px solid var(--bg-dark-purple);
             border-radius: 25px;
@@ -132,12 +130,11 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            justify-content: center;
         }
 
-        /* หัวข้อ รับซื้อ/ขายออก ภายในกล่องย่อย (สีม่วงทั้งคู่) */
+        /* หัวข้อ รับซื้อ/ขายออก ภายในกล่องย่อย */
         .price-label {
-            font-size: 7vw; /* ปรับขนาดตัวอักษรหัวกล่องย่อย */
+            font-size: 7vw; 
             color: var(--text-white);
             background-color: var(--bg-dark-purple);
             font-weight: 700;
@@ -151,7 +148,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15vw; /* ขยายตัวเลขให้ใหญ่ขึ้นเต็มตากว่าเดิม */
+            font-size: 15vw; 
             font-weight: 800;
             color: var(--text-black);
             padding: 1vh 0;
