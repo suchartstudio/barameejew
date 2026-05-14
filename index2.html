@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ป้ายราคาทอง แนวตั้ง - โทนม่วง (พื้นเลขเหลือง)</title>
+    <title>ป้ายราคาทอง แนวตั้ง - โทนม่วง (พื้นเลขม่วงอ่อน)</title>
     <!-- โหลด Font Bai Jamjuree จาก Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* -----------------------------------
-           ตั้งค่าโทนสี: ม่วงเข้ม ม่วงสว่าง ขาว ดำ แดง เหลือง
+           ตั้งค่าโทนสี: ม่วงเข้ม ม่วงสว่าง ม่วงอ่อน ขาว ดำ แดง เหลือง
            ----------------------------------- */
         :root {
             --bg-dark-purple: #4a148c;   /* ม่วงเข้ม */
             --bg-bright-purple: #d500f9; /* ม่วงสว่าง */
+            --bg-light-purple: #f0d9ff;  /* ม่วงอ่อนโทนสว่าง (สำหรับพื้นหลังตัวเลข) */
             --bg-gradient-top: #7b1fa2;  /* ม่วงกลางสำหรับไล่สี */
             --text-white: #ffffff;       /* ขาว */
             --text-black: #111111;       /* ดำ */
             --bg-white: #ffffff;         /* พื้นหลังขาว (ยังคงไว้ใช้เป็นพื้นการ์ดหลัก) */
             --bg-red: #c62828;           /* แดง (สำหรับหัวข้อ) */
-            --text-yellow: #ffeb3b;      /* เหลือง (สำหรับข้อความหัวข้อและพื้นหลังราคา) */
+            --text-yellow: #ffeb3b;      /* เหลือง (สำหรับข้อความหัวข้อ) */
         }
 
         body {
@@ -32,7 +33,6 @@
             display: flex;
             flex-direction: column;
             position: relative; 
-            /* ยกเลิกคำสั่ง cursor: none; เมาส์จะกลับมาแสดงปกติ */
         }
 
         /* ส่วนหัว (Header) */
@@ -125,8 +125,8 @@
             text-align: center;
             width: 90%;  
             flex: 1; 
-            /* เปลี่ยนพื้นหลังส่วนตัวเลขเป็นสีเหลือง */
-            background-color: var(--text-yellow);
+            /* เปลี่ยนพื้นหลังส่วนตัวเลขเป็นสีม่วงอ่อน */
+            background-color: var(--bg-light-purple);
             border: 6px solid var(--bg-dark-purple);
             border-radius: 25px;
             display: flex;
@@ -143,7 +143,7 @@
             font-weight: 700;
             padding: 2.5vh 0;
             margin: 0;
-            border-bottom: 4px solid var(--bg-dark-purple); /* เพิ่มเส้นขอบแบ่งให้ชัดขึ้น */
+            border-bottom: 4px solid var(--bg-dark-purple); 
         }
 
         /* ตัวเลขราคาในกล่องย่อย */
@@ -163,8 +163,8 @@
            หน้า 2: ป้ายอ้างอิง และ Grid % ทอง
            ----------------------------------- */
         .main-price-card {
-            /* เปลี่ยนพื้นหลังการ์ดราคากลางเป็นสีเหลือง */
-            background-color: var(--text-yellow);
+            /* เปลี่ยนพื้นหลังการ์ดราคากลางเป็นสีม่วงอ่อน */
+            background-color: var(--bg-light-purple);
             border: 5px solid var(--bg-dark-purple);
             border-radius: 20px;
             padding: 1.5vh 4vw; 
@@ -219,8 +219,8 @@
         .percent-value {
             font-size: 6vw; 
             font-weight: 800;
-            /* เปลี่ยนพื้นหลังกล่องเปอร์เซ็นต์ทองเป็นสีเหลือง */
-            background-color: var(--text-yellow);
+            /* เปลี่ยนพื้นหลังกล่องเปอร์เซ็นต์ทองเป็นสีม่วงอ่อน */
+            background-color: var(--bg-light-purple);
             color: var(--text-black);
             width: 85%;
             text-align: center;
