@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baramee Gold Signage - Display (Forced Media)</title>
+    <title>Baramee Gold Signage - Loop Sync</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,7 +30,6 @@
         }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 5; }
 
-        /* หน้า 1: ราคาทอง + สื่อวิดีโอ */
         .screen1-layout { flex-direction: row; gap: 2vw; }
         .left-panel { width: 40%; display: flex; flex-direction: column; }
         .right-panel { 
@@ -39,13 +38,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* บังคับให้สื่อ "ยืด" เต็มพื้นที่พอดี */
-        .media-item { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: fill; /* ยืดให้เต็มกรอบแบบไม่มีขอบดำ */
-            display: none; 
-        }
+        .media-item { width: 100%; height: 100%; object-fit: fill; display: none; }
         .media-active { display: block; }
 
         .card { background-color: var(--bg-white); border: 5px solid var(--bg-bright); border-radius: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -55,14 +48,12 @@
         .price-label { font-size: 3.5vh; color: var(--text-white); background-color: var(--bg-dark); font-weight: 700; padding: 1vh 0; text-align: center; }
         .price-value { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10vh; font-weight: 800; color: var(--text-black); }
 
-        /* หน้า 2: Grid 4x3 */
         .screen2-layout { flex-direction: column; gap: 2vh; }
         .main-price-card { background-color: var(--bg-light); border: 4px solid var(--bg-dark); border-radius: 20px; padding: 1.5vh 3vw; display: flex; justify-content: space-between; align-items: center; height: 12%; }
         .grid-container { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5vh 1.5vw; }
         .percent-box { background-color: var(--bg-dark); border: 3px solid var(--bg-bright); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
         .percent-value { background-color: var(--bg-light); color: #000; width: 85%; text-align: center; border-radius: 10px; font-size: 5.5vh; font-weight: 800; margin-top: 0.5vh; padding: 0.3vh 0; }
 
-        /* Footer ตัววิ่ง */
         footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; }
         .ticker { display: inline-block; white-space: nowrap; padding-left: 100vw; animation: marquee var(--ticker-speed) linear infinite; font-size: 4.5vh; font-weight: 700; color: #fff; text-shadow: 0 0 8px var(--bg-bright); }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
@@ -74,6 +65,7 @@
         <div id="last-update">อัปเดตข้อมูลล่าสุด: กำลังโหลด...</div>
     </header>
     <main>
+        <!-- Screen 1: Media is the king here -->
         <div id="screen1" class="screen screen1-layout active">
             <div class="left-panel">
                 <div class="card">
@@ -85,11 +77,11 @@
                 </div>
             </div>
             <div class="right-panel">
-                <!-- สื่อโฆษณา -->
                 <img id="media-img" class="media-item">
                 <video id="media-vid" class="media-item" muted autoplay playsinline></video>
             </div>
         </div>
+        <!-- Screen 2: Display for 30s -->
         <div id="screen2" class="screen screen2-layout">
             <div class="main-price-card">
                 <h2 style="font-size: 4vh; margin:0;">ราคาทองคำแท่งรับซื้อล่าสุด</h2>
@@ -115,18 +107,20 @@
 
         const API_URL = 'https://api.chnwt.dev/thai-gold-api/latest';
         const percentages = [90, 85, 80, 75, 70, 60, 58, 50, 40, 37, 30, 20];
-        let currentScreen = 1; let settings = {};
-
-        // --- แก้ไขตรงนี้เป็น URL GitHub ของคุณ ---
-        const GITHUB_PATH = "https://shuchart.github.io/gold-signage/"; 
         
-        // บังคับลิสต์ไฟล์ตามเงื่อนไขของคุณ
+        // --- เปลี่ยน URL GitHub ของคุณที่นี่ ---
+        const GITHUB_PATH = "https://shuchart.github.io/gold-signage/"; 
         const forcedMedia = [
             GITHUB_PATH + "video.mp4",
             GITHUB_PATH + "slide1.png",
             GITHUB_PATH + "slide2.png",
             GITHUB_PATH + "slide3.png"
         ];
+
+        let settings = {};
+        let mediaIdx = 0;
+        let mediaTimer;
+        let currentScreen = 1;
 
         onValue(settingsRef, (snap) => {
             const data = snap.val();
@@ -138,7 +132,7 @@
                 document.documentElement.style.setProperty('--ticker-speed', settings.tickerSpeed + 's');
                 document.getElementById('ticker-text').innerText = settings.tickerText;
                 fetchGoldData();
-                playMedia();
+                if(currentScreen === 1) playMedia();
             }
         });
 
@@ -166,8 +160,9 @@
             } catch (e) { console.error(e); }
         }
 
-        let mediaIdx = 0; let mediaTimer;
-        window.playMedia = () => {
+        function playMedia() {
+            if(currentScreen !== 1) return;
+            
             const url = forcedMedia[mediaIdx];
             const isVid = url.toLowerCase().endsWith(".mp4");
             const img = document.getElementById('media-img'); const vid = document.getElementById('media-vid');
@@ -176,21 +171,43 @@
             if (isVid) {
                 img.classList.remove('media-active'); vid.classList.add('media-active');
                 vid.src = url; vid.load();
-                vid.play().catch(e => setTimeout(nextMedia, 5000)); 
+                vid.play().catch(() => setTimeout(nextMedia, 5000)); 
                 vid.onended = nextMedia;
             } else {
                 vid.pause(); vid.classList.remove('media-active'); img.classList.add('media-active');
                 img.src = url; 
-                mediaTimer = setTimeout(nextMedia, 15000); // รูปวนทุก 15 วินาที
+                mediaTimer = setTimeout(nextMedia, 15000); // แสดงภาพละ 15 วินาที
             }
-        };
-        function nextMedia() { mediaIdx = (mediaIdx + 1) % forcedMedia.length; playMedia(); }
+        }
 
-        setInterval(() => {
-            const s1 = document.getElementById('screen1'); const s2 = document.getElementById('screen2');
-            if (currentScreen === 1) { s1.classList.remove('active'); s2.classList.add('active'); currentScreen = 2; }
-            else { s2.classList.remove('active'); s1.classList.add('active'); currentScreen = 1; }
-        }, 30000);
+        function nextMedia() {
+            mediaIdx++;
+            // ถ้าเล่นจนครบลิสต์แล้ว (จบ slide 3)
+            if (mediaIdx >= forcedMedia.length) {
+                mediaIdx = 0; // รีเซ็ต index เตรียมไว้สำหรับรอบหน้า
+                switchToScreen(2); // สลับไปหน้า 2
+            } else {
+                playMedia(); // เล่นไฟล์ถัดไป
+            }
+        }
+
+        function switchToScreen(num) {
+            currentScreen = num;
+            const s1 = document.getElementById('screen1');
+            const s2 = document.getElementById('screen2');
+            
+            if (num === 2) {
+                s1.classList.remove('active');
+                s2.classList.add('active');
+                // โชว์หน้า 2 ไว้ 30 วินาที แล้วกลับไปหน้า 1
+                setTimeout(() => switchToScreen(1), 30000);
+            } else {
+                s2.classList.remove('active');
+                s1.classList.add('active');
+                playMedia(); // เริ่มเล่นสื่อรอบใหม่
+            }
+        }
+
         setInterval(fetchGoldData, 300000);
     </script>
 </body>
