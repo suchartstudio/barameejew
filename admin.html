@@ -7,31 +7,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Bai Jamjuree', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        #login-form, #admin-content { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
-        #admin-content { display: none; max-width: 800px; }
+        #login-form, #admin-content { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; }
+        #admin-content { display: none; }
         h2 { text-align: center; color: #4a148c; margin-top: 0; }
         .field { margin-bottom: 15px; display: flex; flex-direction: column; }
         label { font-weight: bold; margin-bottom: 5px; color: #333; }
         input, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; }
+        .color-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+        .color-picker-wrap { display: flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
+        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
         button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
         .btn-login { background: #4a148c; color: white; width: 100%; }
-        .btn-save { background: #28a745; color: white; }
-        .color-row { display: flex; gap: 10px; }
-        .color-row div { flex: 1; display: flex; flex-direction: column; }
+        .btn-save { background: #28a745; color: white; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-    <!-- หน้า Login -->
     <div id="login-form">
         <h2>🔒 เข้าสู่ระบบแอดมิน</h2>
-        <div class="field">
-            <input type="password" id="pass-input" placeholder="กรุณาใส่รหัสผ่าน 9 หลัก" maxlength="9">
-        </div>
+        <input type="password" id="pass-input" placeholder="ใส่รหัสผ่าน 9 หลัก" style="width:100%; box-sizing:border-box;">
         <button class="btn-login" onclick="checkPass()">ตกลง</button>
     </div>
 
-    <!-- หน้าจัดการข้อมูล -->
     <div id="admin-content">
         <h2>⚙️ ตั้งค่าป้ายโฆษณา</h2>
         <div class="field">
@@ -39,24 +35,35 @@
             <textarea id="in-ticker" rows="3"></textarea>
         </div>
         <div class="field">
-            <label>ความเร็วตัววิ่ง (วินาที - น้อยคือเร็ว):</label>
+            <label>ความเร็วตัววิ่ง (วินาที):</label>
             <input type="number" id="in-speed">
         </div>
         <div class="field">
-            <label>ลิสต์ไฟล์สื่อ (URL รูป/วิดีโอ บรรทัดละ 1 ลิงก์):</label>
+            <label>รายการสื่อโฆษณา (ไฟล์ใน GitHub):</label>
             <textarea id="in-media" rows="5"></textarea>
+            <small style="color:gray; margin-top:5px;">ใส่ชื่อไฟล์บรรทัดละ 1 ไฟล์ (เช่น video.mp4)</small>
         </div>
+        <label>ปรับแต่งชุดสี Theme:</label>
         <div class="color-row">
-            <div class="field"><label>สีมืด:</label><input type="color" id="in-dark"></div>
-            <div class="field"><label>สีสว่าง:</label><input type="color" id="in-bright"></div>
-            <div class="field"><label>สีพื้นราคา:</label><input type="color" id="in-light"></div>
+            <div class="color-picker-wrap">
+                <input type="color" id="in-dark" oninput="this.nextElementSibling.innerText = this.value">
+                <span style="font-size:12px; font-weight:bold;">สีมืด</span>
+            </div>
+            <div class="color-picker-wrap">
+                <input type="color" id="in-bright" oninput="this.nextElementSibling.innerText = this.value">
+                <span style="font-size:12px; font-weight:bold;">สีสว่าง</span>
+            </div>
+            <div class="color-picker-wrap">
+                <input type="color" id="in-light" oninput="this.nextElementSibling.innerText = this.value">
+                <span style="font-size:12px; font-weight:bold;">พื้นราคา</span>
+            </div>
         </div>
-        <button class="btn-login btn-save" id="btn-save-data">บันทึกข้อมูลและอัปเดตป้าย</button>
+        <button class="btn-login btn-save" id="btn-save-data">บันทึกและอัปเดตป้าย</button>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", authDomain: "signage-eac53.firebaseapp.com",
@@ -67,28 +74,26 @@
         const db = getDatabase(app);
         const settingsRef = ref(db, 'settings');
 
-        let currentSettings = {};
+        // URL หลักของ GitHub Pages ของคุณ (แก้เป็น URL ของคุณ)
+        const GITHUB_BASE_URL = "https://your-username.github.io/your-repo-name/"; 
 
-        // ฟังก์ชันตรวจสอบรหัสผ่าน
         window.checkPass = () => {
-            const input = document.getElementById('pass-input').value;
-            if (input === '987654321') {
+            if (document.getElementById('pass-input').value === '987654321') {
                 document.getElementById('login-form').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 loadData();
-            } else {
-                alert('รหัสผ่านไม่ถูกต้อง!');
-            }
+            } else { alert('รหัสผ่านไม่ถูกต้อง!'); }
         };
 
         function loadData() {
             onValue(settingsRef, (snap) => {
                 const data = snap.val();
                 if (data) {
-                    currentSettings = data;
                     document.getElementById('in-ticker').value = data.tickerText;
                     document.getElementById('in-speed').value = data.tickerSpeed;
-                    document.getElementById('in-media').value = data.mediaList.join('\n');
+                    // แสดงเฉพาะชื่อไฟล์
+                    const fileNames = data.mediaList.map(url => url.replace(GITHUB_BASE_URL, ""));
+                    document.getElementById('in-media').value = fileNames.join('\n');
                     document.getElementById('in-dark').value = data.colorDark;
                     document.getElementById('in-bright').value = data.colorBright;
                     document.getElementById('in-light').value = data.colorLight;
@@ -97,15 +102,18 @@
         }
 
         document.getElementById('btn-save-data').onclick = () => {
+            const files = document.getElementById('in-media').value.split('\n').filter(f => f.trim() !== "");
+            const fullUrls = files.map(f => f.startsWith('http') ? f : GITHUB_BASE_URL + f.trim());
+
             const up = {
                 tickerText: document.getElementById('in-ticker').value,
                 tickerSpeed: parseInt(document.getElementById('in-speed').value) || 35,
-                mediaList: document.getElementById('in-media').value.split('\n').filter(l => l.trim() !== ""),
+                mediaList: fullUrls,
                 colorDark: document.getElementById('in-dark').value,
                 colorBright: document.getElementById('in-bright').value,
                 colorLight: document.getElementById('in-light').value
             };
-            set(settingsRef, up).then(() => alert('อัปเดตข้อมูลสำเร็จ!'));
+            set(settingsRef, up).then(() => alert('อัปเดตสำเร็จ! ป้ายจะเปลี่ยนทันที'));
         };
     </script>
 </body>
