@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control - Baramee Gold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Bai Jamjuree', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        #login-form, #admin-content { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
+        #admin-content { display: none; max-width: 800px; }
+        h2 { text-align: center; color: #4a148c; margin-top: 0; }
+        .field { margin-bottom: 15px; display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; color: #333; }
+        input, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; }
+        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        .btn-login { background: #4a148c; color: white; width: 100%; }
+        .btn-save { background: #28a745; color: white; }
+        .color-row { display: flex; gap: 10px; }
+        .color-row div { flex: 1; display: flex; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+    <!-- หน้า Login -->
+    <div id="login-form">
+        <h2>🔒 เข้าสู่ระบบแอดมิน</h2>
+        <div class="field">
+            <input type="password" id="pass-input" placeholder="กรุณาใส่รหัสผ่าน 9 หลัก" maxlength="9">
+        </div>
+        <button class="btn-login" onclick="checkPass()">ตกลง</button>
+    </div>
+
+    <!-- หน้าจัดการข้อมูล -->
+    <div id="admin-content">
+        <h2>⚙️ ตั้งค่าป้ายโฆษณา</h2>
+        <div class="field">
+            <label>ข้อความตัววิ่ง:</label>
+            <textarea id="in-ticker" rows="3"></textarea>
+        </div>
+        <div class="field">
+            <label>ความเร็วตัววิ่ง (วินาที - น้อยคือเร็ว):</label>
+            <input type="number" id="in-speed">
+        </div>
+        <div class="field">
+            <label>ลิสต์ไฟล์สื่อ (URL รูป/วิดีโอ บรรทัดละ 1 ลิงก์):</label>
+            <textarea id="in-media" rows="5"></textarea>
+        </div>
+        <div class="color-row">
+            <div class="field"><label>สีมืด:</label><input type="color" id="in-dark"></div>
+            <div class="field"><label>สีสว่าง:</label><input type="color" id="in-bright"></div>
+            <div class="field"><label>สีพื้นราคา:</label><input type="color" id="in-light"></div>
+        </div>
+        <button class="btn-login btn-save" id="btn-save-data">บันทึกข้อมูลและอัปเดตป้าย</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", authDomain: "signage-eac53.firebaseapp.com",
+            projectId: "signage-eac53", storageBucket: "signage-eac53.firebasestorage.app",
+            messagingSenderId: "184834384558", appId: "1:184834384558:web:6971ad2a33d07c0236c33f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const settingsRef = ref(db, 'settings');
+
+        let currentSettings = {};
+
+        // ฟังก์ชันตรวจสอบรหัสผ่าน
+        window.checkPass = () => {
+            const input = document.getElementById('pass-input').value;
+            if (input === '987654321') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                loadData();
+            } else {
+                alert('รหัสผ่านไม่ถูกต้อง!');
+            }
+        };
+
+        function loadData() {
+            onValue(settingsRef, (snap) => {
+                const data = snap.val();
+                if (data) {
+                    currentSettings = data;
+                    document.getElementById('in-ticker').value = data.tickerText;
+                    document.getElementById('in-speed').value = data.tickerSpeed;
+                    document.getElementById('in-media').value = data.mediaList.join('\n');
+                    document.getElementById('in-dark').value = data.colorDark;
+                    document.getElementById('in-bright').value = data.colorBright;
+                    document.getElementById('in-light').value = data.colorLight;
+                }
+            });
+        }
+
+        document.getElementById('btn-save-data').onclick = () => {
+            const up = {
+                tickerText: document.getElementById('in-ticker').value,
+                tickerSpeed: parseInt(document.getElementById('in-speed').value) || 35,
+                mediaList: document.getElementById('in-media').value.split('\n').filter(l => l.trim() !== ""),
+                colorDark: document.getElementById('in-dark').value,
+                colorBright: document.getElementById('in-bright').value,
+                colorLight: document.getElementById('in-light').value
+            };
+            set(settingsRef, up).then(() => alert('อัปเดตข้อมูลสำเร็จ!'));
+        };
+    </script>
+</body>
+</html>
