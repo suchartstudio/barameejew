@@ -3,236 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baramee Gold Signage - Cloud Control</title>
+    <title>Baramee Gold Signage - Display</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* ค่าสีเริ่มต้น (จะถูกเขียนทับด้วยข้อมูลจาก Firebase) */
-            --bg-dark: #4a148c;   
-            --bg-bright: #d500f9; 
-            --bg-light: #f0d9ff;  
-            --text-white: #ffffff;
-            --text-black: #111111;
-            --bg-white: #ffffff;
-            --bg-red: #c62828;
-            --text-yellow: #ffeb3b;
-            --ticker-speed: 35s;
+            --bg-dark: #4a148c; --bg-bright: #d500f9; --bg-light: #f0d9ff;  
+            --text-white: #ffffff; --text-black: #111111; --bg-white: #ffffff;
+            --bg-red: #c62828; --text-yellow: #ffeb3b; --ticker-speed: 35s;
         }
-
-        body {
-            margin: 0; padding: 0; width: 100vw; height: 100vh;
-            overflow: hidden; font-family: 'Bai Jamjuree', sans-serif;
-            background: radial-gradient(circle, var(--bg-bright) 0%, var(--bg-dark) 100%);
-            display: flex; flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            height: 10vh; background-color: var(--bg-dark); color: var(--text-white);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 5vh; font-weight: 800; letter-spacing: 2px;
-            text-shadow: 2px 3px 5px rgba(0,0,0,0.6);
-            border-bottom: 5px solid var(--bg-bright);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            z-index: 10; cursor: pointer;
-        }
-
+        body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Bai Jamjuree', sans-serif; background: radial-gradient(circle, var(--bg-bright) 0%, var(--bg-dark) 100%); display: flex; flex-direction: column; }
+        header { height: 10vh; background-color: var(--bg-dark); color: var(--text-white); display: flex; align-items: center; justify-content: center; font-size: 5vh; font-weight: 800; border-bottom: 5px solid var(--bg-bright); box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
         main { flex: 1; position: relative; width: 100%; }
-
-        .screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 2vh 2vw; box-sizing: border-box;
-            display: flex; opacity: 0; transition: opacity 1s ease-in-out;
-            pointer-events: none; padding-bottom: 11vh; 
-        }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 2vh 2vw; box-sizing: border-box; display: flex; opacity: 0; transition: opacity 1s ease-in-out; pointer-events: none; padding-bottom: 11vh; }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 5; }
-
-        /* Screen 1 Layout: Left (Prices) | Right (Media) */
         .screen1-layout { flex-direction: row; gap: 2vw; }
         .left-panel { width: 40%; display: flex; flex-direction: column; }
-        .right-panel {
-            width: 60%; background-color: #000; border: 6px solid var(--bg-bright);
-            border-radius: 25px; overflow: hidden; display: flex;
-            justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .card {
-            background-color: var(--bg-white); border: 5px solid var(--bg-bright);
-            border-radius: 25px; flex: 1; display: flex; flex-direction: column;
-            overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .card-header {
-            background-color: var(--bg-red); color: var(--text-yellow);
-            font-size: 4vh; font-weight: 800; text-align: center;
-            padding: 1.5vh 0; border-bottom: 4px solid var(--text-yellow);
-        }
+        .right-panel { width: 60%; background-color: #000; border: 6px solid var(--bg-bright); border-radius: 25px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .card { background-color: var(--bg-white); border: 5px solid var(--bg-bright); border-radius: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .card-header { background-color: var(--bg-red); color: var(--text-yellow); font-size: 4vh; font-weight: 800; text-align: center; padding: 1.5vh 0; border-bottom: 4px solid var(--text-yellow); }
         .price-container { flex: 1; display: flex; flex-direction: column; padding: 2vh 1.5vw; gap: 2vh; }
-        .price-box {
-            flex: 1; background-color: var(--bg-light); border: 5px solid var(--bg-dark);
-            border-radius: 20px; display: flex; flex-direction: column; overflow: hidden;
-        }
-        .price-label {
-            font-size: 3vh; color: var(--text-white); background-color: var(--bg-dark);
-            font-weight: 700; padding: 1vh 0; text-align: center;
-        }
-        .price-value {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            font-size: 9vh; font-weight: 800; color: var(--text-black);
-        }
-
-        /* Screen 2 Layout: Grid 4x3 */
+        .price-box { flex: 1; background-color: var(--bg-light); border: 5px solid var(--bg-dark); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .price-label { font-size: 3vh; color: var(--text-white); background-color: var(--bg-dark); font-weight: 700; padding: 1vh 0; text-align: center; }
+        .price-value { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 9vh; font-weight: 800; color: var(--text-black); }
         .screen2-layout { flex-direction: column; gap: 2vh; }
-        .main-price-card {
-            background-color: var(--bg-light); border: 4px solid var(--bg-dark);
-            border-radius: 20px; padding: 1.5vh 3vw; display: flex;
-            justify-content: space-between; align-items: center; height: 12%;
-        }
-        .grid-container {
-            flex: 1; display: grid; grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr); gap: 1.5vh 1.5vw;
-        }
-        .percent-box {
-            background-color: var(--bg-dark); border: 3px solid var(--bg-bright);
-            border-radius: 15px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; color: #fff;
-        }
-        .percent-value {
-            background-color: var(--bg-light); color: #000; width: 85%;
-            text-align: center; border-radius: 10px; font-size: 5vh; font-weight: 800;
-            margin-top: 0.5vh; padding: 0.2vh 0;
-        }
-
-        /* Footer Ticker */
-        footer {
-            height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright);
-            position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center;
-            z-index: 20; transition: opacity 0.5s;
-        }
+        .main-price-card { background-color: var(--bg-light); border: 4px solid var(--bg-dark); border-radius: 20px; padding: 1.5vh 3vw; display: flex; justify-content: space-between; align-items: center; height: 12%; }
+        .grid-container { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5vh 1.5vw; }
+        .percent-box { background-color: var(--bg-dark); border: 3px solid var(--bg-bright); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+        .percent-value { background-color: var(--bg-light); color: #000; width: 85%; text-align: center; border-radius: 10px; font-size: 5vh; font-weight: 800; margin-top: 0.5vh; padding: 0.2vh 0; }
+        footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; transition: opacity 0.5s; }
         footer.hidden { opacity: 0; }
-        .ticker {
-            display: inline-block; white-space: nowrap; padding-left: 100vw;
-            animation: marquee var(--ticker-speed) linear infinite;
-            font-size: 4.5vh; font-weight: 700; color: #fff;
-            text-shadow: 0 0 8px var(--bg-bright);
-        }
+        .ticker { display: inline-block; white-space: nowrap; padding-left: 100vw; animation: marquee var(--ticker-speed) linear infinite; font-size: 4.5vh; font-weight: 700; color: #fff; text-shadow: 0 0 8px var(--bg-bright); }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        /* Media Elements */
         .media-item { width: 100%; height: 100%; object-fit: cover; display: none; }
         .media-active { display: block; }
-
-        /* Admin Panel */
-        #admin-panel {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.9); z-index: 999; justify-content: center; align-items: center;
-        }
-        .admin-card {
-            background: #fff; width: 70%; max-height: 85vh; border-radius: 20px;
-            padding: 30px; overflow-y: auto; font-family: sans-serif;
-        }
-        .admin-card h2 { margin-top: 0; color: #333; }
-        .admin-field { margin-bottom: 15px; display: flex; flex-direction: column; }
-        .admin-field label { font-weight: bold; margin-bottom: 5px; }
-        .admin-field input, .admin-field textarea { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
-        .admin-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-        .btn { padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-save { background: #28a745; color: #fff; }
-        .btn-cancel { background: #dc3545; color: #fff; }
     </style>
 </head>
 <body>
-
-    <header ondblclick="window.openAdmin()">บารมี แอนติกจิวเวลรี่</header>
-
+    <header>บารมี แอนติกจิวเวลรี่</header>
     <main>
-        <!-- หน้า 1: ราคาสด + สื่อ -->
         <div id="screen1" class="screen screen1-layout active">
             <div class="left-panel">
-                <div class="card">
-                    <div class="card-header">ราคาทองคำแท่ง (บาทละ)</div>
+                <div class="card"><div class="card-header">ราคาทองคำแท่ง (บาทละ)</div>
                     <div class="price-container">
-                        <div class="price-box">
-                            <div class="price-label">รับซื้อคืน</div>
-                            <div id="bar-buy" class="price-value">...</div>
-                        </div>
-                        <div class="price-box">
-                            <div class="price-label">ขายออก</div>
-                            <div id="bar-sell" class="price-value">...</div>
-                        </div>
+                        <div class="price-box"><div class="price-label">รับซื้อคืน</div><div id="bar-buy" class="price-value">...</div></div>
+                        <div class="price-box"><div class="price-label">ขายออก</div><div id="bar-sell" class="price-value">...</div></div>
                     </div>
                 </div>
             </div>
-            <div class="right-panel">
-                <img id="media-img" class="media-item">
-                <video id="media-vid" class="media-item" muted autoplay></video>
-            </div>
+            <div class="right-panel"><img id="media-img" class="media-item"><video id="media-vid" class="media-item" muted autoplay></video></div>
         </div>
-
-        <!-- หน้า 2: เปอร์เซ็นต์ทอง -->
         <div id="screen2" class="screen screen2-layout">
-            <div class="main-price-card">
-                <h2 style="font-size: 4vh;">ราคาทองคำแท่งรับซื้อล่าสุด</h2>
-                <div class="main-value"><span id="main-bar-buy">...</span> บาท</div>
-            </div>
+            <div class="main-price-card"><h2 style="font-size: 4vh;">ราคาทองคำแท่งรับซื้อล่าสุด</h2><div class="main-value"><span id="main-bar-buy">...</span> บาท</div></div>
             <div id="percent-grid" class="grid-container"></div>
         </div>
     </main>
+    <footer id="site-footer"><div class="ticker" id="ticker-text">กำลังโหลดข้อมูล...</div></footer>
 
-    <footer id="site-footer">
-        <div class="ticker" id="ticker-text">กำลังโหลดข้อมูล...</div>
-    </footer>
-
-    <!-- Admin Panel -->
-    <div id="admin-panel">
-        <div class="admin-card">
-            <h2>⚙️ ตั้งค่าระบบป้าย</h2>
-            <div class="admin-field">
-                <label>ข้อความตัววิ่ง:</label>
-                <textarea id="in-ticker" rows="3"></textarea>
-            </div>
-            <div class="admin-field">
-                <label>ความเร็วตัววิ่ง (วินาที - ยิ่งน้อยยิ่งเร็ว):</label>
-                <input type="number" id="in-speed">
-            </div>
-            <div class="admin-field">
-                <label>ลิสต์ไฟล์สื่อ (URL รูปภาพ/วิดีโอ บรรทัดละ 1 ลิงก์):</label>
-                <textarea id="in-media" rows="5"></textarea>
-            </div>
-            <div style="display:flex; gap:15px;">
-                <div class="admin-field" style="flex:1;">
-                    <label>สีหลัก (มืด):</label>
-                    <input type="color" id="in-dark">
-                </div>
-                <div class="admin-field" style="flex:1;">
-                    <label>สีสว่าง (เส้นขอบ):</label>
-                    <input type="color" id="in-bright">
-                </div>
-                <div class="admin-field" style="flex:1;">
-                    <label>สีพื้นหลังราคา:</label>
-                    <input type="color" id="in-light">
-                </div>
-            </div>
-            <div class="admin-btns">
-                <button class="btn btn-cancel" onclick="window.closeAdmin()">ปิด</button>
-                <button class="btn btn-save" onclick="window.saveAdmin()">บันทึกข้อมูล</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs",
-            authDomain: "signage-eac53.firebaseapp.com",
-            projectId: "signage-eac53",
-            storageBucket: "signage-eac53.firebasestorage.app",
-            messagingSenderId: "184834384558",
-            appId: "1:184834384558:web:6971ad2a33d07c0236c33f"
+            apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", authDomain: "signage-eac53.firebaseapp.com",
+            projectId: "signage-eac53", storageBucket: "signage-eac53.firebasestorage.app",
+            messagingSenderId: "184834384558", appId: "1:184834384558:web:6971ad2a33d07c0236c33f"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const settingsRef = ref(db, 'settings');
@@ -242,120 +77,59 @@
         let currentScreen = 1;
         let settings = {};
 
-        // Listen for data changes
         onValue(settingsRef, (snap) => {
             const data = snap.val();
             if (data) {
                 settings = data;
-                applySettings();
-                fetchGoldData();
-                playMedia();
-            } else {
-                // Initial Default Data
-                set(settingsRef, {
-                    tickerText: "ยินดีต้อนรับสู่ บารมี แอนติกจิวเวลรี่ สอบถามโทร 080-226-2622",
-                    tickerSpeed: 35,
-                    mediaList: ["https://images.unsplash.com/photo-1610375461246-83df859d849d?w=1200"],
-                    colorDark: "#4a148c", colorBright: "#d500f9", colorLight: "#f0d9ff"
-                });
+                document.documentElement.style.setProperty('--bg-dark', settings.colorDark);
+                document.documentElement.style.setProperty('--bg-bright', settings.colorBright);
+                document.documentElement.style.setProperty('--bg-light', settings.colorLight);
+                document.documentElement.style.setProperty('--ticker-speed', settings.tickerSpeed + 's');
+                fetchGoldData(); playMedia();
             }
         });
-
-        function applySettings() {
-            const root = document.documentElement;
-            root.style.setProperty('--bg-dark', settings.colorDark);
-            root.style.setProperty('--bg-bright', settings.colorBright);
-            root.style.setProperty('--bg-light', settings.colorLight);
-            root.style.setProperty('--ticker-speed', settings.tickerSpeed + 's');
-        }
 
         async function fetchGoldData() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
                 if (data.status === 'success') {
-                    const price = data.response.price;
-                    const buy = parseFloat(price.gold_bar.buy.replace(/,/g, ''));
-                    const sell = parseFloat(price.gold_bar.sell.replace(/,/g, ''));
-                    
+                    const buy = parseFloat(data.response.price.gold_bar.buy.replace(/,/g, ''));
                     document.getElementById('bar-buy').innerText = Math.round(buy).toLocaleString();
-                    document.getElementById('bar-sell').innerText = Math.round(sell).toLocaleString();
+                    document.getElementById('bar-sell').innerText = Math.round(parseFloat(data.response.price.gold_bar.sell.replace(/,/g, ''))).toLocaleString();
                     document.getElementById('main-bar-buy').innerText = Math.round(buy).toLocaleString();
-
-                    const grid = document.getElementById('percent-grid');
-                    grid.innerHTML = '';
+                    const grid = document.getElementById('percent-grid'); grid.innerHTML = '';
                     percentages.forEach(p => {
                         const val = Math.round(buy * 0.0656 * (p / 100)).toLocaleString();
-                        grid.innerHTML += `<div class="percent-box">
-                            <div style="font-size:2.5vh; font-weight:700;">ทอง ${p}%</div>
-                            <div class="percent-value">${val}</div>
-                        </div>`;
+                        grid.innerHTML += `<div class="percent-box"><div style="font-size:2.5vh; font-weight:700;">ทอง ${p}%</div><div class="percent-value">${val}</div></div>`;
                     });
-                    document.getElementById('ticker-text').innerText = `[${data.response.update_time}] ${settings.tickerText}`;
+                    document.getElementById('ticker-text').innerText = settings.tickerText;
                 }
-            } catch (e) { console.error("API Error", e); }
+            } catch (e) {}
         }
 
-        let mediaIdx = 0;
-        let mediaTimer;
-        window.playMedia = () => {
-            if (!settings.mediaList || settings.mediaList.length === 0) return;
+        let mediaIdx = 0; let mediaTimer;
+        function playMedia() {
+            if (!settings.mediaList) return;
             const url = settings.mediaList[mediaIdx];
             const isVid = url.match(/\.(mp4|webm|ogg)/i);
-            const img = document.getElementById('media-img');
-            const vid = document.getElementById('media-vid');
+            const img = document.getElementById('media-img'); const vid = document.getElementById('media-vid');
             clearTimeout(mediaTimer);
             if (isVid) {
-                img.classList.remove('media-active'); vid.classList.add('media-active');
-                vid.src = url; vid.play().catch(() => setTimeout(nextMedia, 5000));
-                vid.onended = nextMedia;
+                img.classList.remove('media-active'); vid.classList.add('media-active'); vid.src = url;
+                vid.play().catch(() => setTimeout(nextMedia, 5000)); vid.onended = nextMedia;
             } else {
-                vid.classList.remove('media-active'); img.classList.add('media-active');
-                img.src = url; mediaTimer = setTimeout(nextMedia, 15000);
+                vid.classList.remove('media-active'); img.classList.add('media-active'); img.src = url;
+                mediaTimer = setTimeout(nextMedia, 15000);
             }
-        };
-        function nextMedia() {
-            mediaIdx = (mediaIdx + 1) % settings.mediaList.length;
-            playMedia();
         }
+        function nextMedia() { mediaIdx = (mediaIdx + 1) % settings.mediaList.length; playMedia(); }
 
-        window.openAdmin = () => {
-            document.getElementById('in-ticker').value = settings.tickerText;
-            document.getElementById('in-speed').value = settings.tickerSpeed;
-            document.getElementById('in-media').value = settings.mediaList.join('\n');
-            document.getElementById('in-dark').value = settings.colorDark;
-            document.getElementById('in-bright').value = settings.colorBright;
-            document.getElementById('in-light').value = settings.colorLight;
-            document.getElementById('admin-panel').style.display = 'flex';
-        };
-        window.closeAdmin = () => document.getElementById('admin-panel').style.display = 'none';
-        window.saveAdmin = () => {
-            const up = {
-                tickerText: document.getElementById('in-ticker').value,
-                tickerSpeed: parseInt(document.getElementById('in-speed').value) || 35,
-                mediaList: document.getElementById('in-media').value.split('\n').filter(l => l.trim() !== ""),
-                colorDark: document.getElementById('in-dark').value,
-                colorBright: document.getElementById('in-bright').value,
-                colorLight: document.getElementById('in-light').value
-            };
-            set(settingsRef, up).then(() => window.closeAdmin());
-        };
-
-        // สลับหน้าจออัตโนมัติ
         setInterval(() => {
-            const s1 = document.getElementById('screen1');
-            const s2 = document.getElementById('screen2');
-            const f = document.getElementById('site-footer');
-            if (currentScreen === 1) {
-                s1.classList.remove('active'); s2.classList.add('active'); f.classList.add('hidden');
-                currentScreen = 2;
-            } else {
-                s2.classList.remove('active'); s1.classList.add('active'); f.classList.remove('hidden');
-                currentScreen = 1;
-            }
+            const s1 = document.getElementById('screen1'); const s2 = document.getElementById('screen2'); const f = document.getElementById('site-footer');
+            if (currentScreen === 1) { s1.classList.remove('active'); s2.classList.add('active'); f.classList.add('hidden'); currentScreen = 2; }
+            else { s2.classList.remove('active'); s1.classList.add('active'); f.classList.remove('hidden'); currentScreen = 1; }
         }, 30000);
-
-        setInterval(fetchGoldData, 300000);
     </script>
 </body>
 </html>
