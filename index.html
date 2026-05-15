@@ -12,10 +12,15 @@
             --bg-red: #c62828; --text-yellow: #ffeb3b; --ticker-speed: 35s;
         }
         body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Bai Jamjuree', sans-serif; background: radial-gradient(circle, var(--bg-bright) 0%, var(--bg-dark) 100%); display: flex; flex-direction: column; }
-        header { height: 10vh; background-color: var(--bg-dark); color: var(--text-white); display: flex; align-items: center; justify-content: center; font-size: 5vh; font-weight: 800; border-bottom: 5px solid var(--bg-bright); box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
+        header { height: 10vh; background-color: var(--bg-dark); color: var(--text-white); display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 5px solid var(--bg-bright); box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 10; }
+        .header-title { font-size: 4.5vh; font-weight: 800; line-height: 1; }
+        .header-time { font-size: 2.2vh; font-weight: 400; margin-top: 5px; opacity: 0.9; }
+        
         main { flex: 1; position: relative; width: 100%; }
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 2vh 2vw; box-sizing: border-box; display: flex; opacity: 0; transition: opacity 1s ease-in-out; pointer-events: none; padding-bottom: 11vh; }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 5; }
+        
+        /* Layouts */
         .screen1-layout { flex-direction: row; gap: 2vw; }
         .left-panel { width: 40%; display: flex; flex-direction: column; }
         .right-panel { width: 60%; background-color: #000; border: 6px solid var(--bg-bright); border-radius: 25px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
@@ -25,21 +30,26 @@
         .price-box { flex: 1; background-color: var(--bg-light); border: 5px solid var(--bg-dark); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
         .price-label { font-size: 3vh; color: var(--text-white); background-color: var(--bg-dark); font-weight: 700; padding: 1vh 0; text-align: center; }
         .price-value { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 9vh; font-weight: 800; color: var(--text-black); }
+        
         .screen2-layout { flex-direction: column; gap: 2vh; }
         .main-price-card { background-color: var(--bg-light); border: 4px solid var(--bg-dark); border-radius: 20px; padding: 1.5vh 3vw; display: flex; justify-content: space-between; align-items: center; height: 12%; }
         .grid-container { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5vh 1.5vw; }
         .percent-box { background-color: var(--bg-dark); border: 3px solid var(--bg-bright); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
         .percent-value { background-color: var(--bg-light); color: #000; width: 85%; text-align: center; border-radius: 10px; font-size: 5vh; font-weight: 800; margin-top: 0.5vh; padding: 0.2vh 0; }
-        footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; transition: opacity 0.5s; }
-        footer.hidden { opacity: 0; }
+        
+        footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; }
         .ticker { display: inline-block; white-space: nowrap; padding-left: 100vw; animation: marquee var(--ticker-speed) linear infinite; font-size: 4.5vh; font-weight: 700; color: #fff; text-shadow: 0 0 8px var(--bg-bright); }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
         .media-item { width: 100%; height: 100%; object-fit: cover; display: none; }
         .media-active { display: block; }
     </style>
 </head>
 <body>
-    <header>บารมี แอนติกจิวเวลรี่</header>
+    <header>
+        <div class="header-title">บารมี แอนติกจิวเวลรี่</div>
+        <div id="last-update" class="header-time">อัปเดตข้อมูลล่าสุด: กำลังโหลด...</div>
+    </header>
     <main>
         <div id="screen1" class="screen screen1-layout active">
             <div class="left-panel">
@@ -53,15 +63,15 @@
             <div class="right-panel"><img id="media-img" class="media-item"><video id="media-vid" class="media-item" muted autoplay></video></div>
         </div>
         <div id="screen2" class="screen screen2-layout">
-            <div class="main-price-card"><h2 style="font-size: 4vh;">ราคาทองคำแท่งรับซื้อล่าสุด</h2><div class="main-value"><span id="main-bar-buy">...</span> บาท</div></div>
+            <div class="main-price-card"><h2 style="font-size: 4vh; margin:0;">ราคาทองคำแท่งรับซื้อล่าสุด</h2><div class="main-value" style="font-size:7vh; font-weight:800; color:var(--bg-dark);"><span id="main-bar-buy">...</span> บาท</div></div>
             <div id="percent-grid" class="grid-container"></div>
         </div>
     </main>
-    <footer id="site-footer"><div class="ticker" id="ticker-text">กำลังโหลดข้อมูล...</div></footer>
+    <footer id="site-footer"><div class="ticker" id="ticker-text">...</div></footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", authDomain: "signage-eac53.firebaseapp.com",
@@ -85,6 +95,7 @@
                 document.documentElement.style.setProperty('--bg-bright', settings.colorBright);
                 document.documentElement.style.setProperty('--bg-light', settings.colorLight);
                 document.documentElement.style.setProperty('--ticker-speed', settings.tickerSpeed + 's');
+                document.getElementById('ticker-text').innerText = settings.tickerText;
                 fetchGoldData(); playMedia();
             }
         });
@@ -98,12 +109,12 @@
                     document.getElementById('bar-buy').innerText = Math.round(buy).toLocaleString();
                     document.getElementById('bar-sell').innerText = Math.round(parseFloat(data.response.price.gold_bar.sell.replace(/,/g, ''))).toLocaleString();
                     document.getElementById('main-bar-buy').innerText = Math.round(buy).toLocaleString();
+                    document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${data.response.date} ${data.response.update_time}`;
                     const grid = document.getElementById('percent-grid'); grid.innerHTML = '';
                     percentages.forEach(p => {
                         const val = Math.round(buy * 0.0656 * (p / 100)).toLocaleString();
                         grid.innerHTML += `<div class="percent-box"><div style="font-size:2.5vh; font-weight:700;">ทอง ${p}%</div><div class="percent-value">${val}</div></div>`;
                     });
-                    document.getElementById('ticker-text').innerText = settings.tickerText;
                 }
             } catch (e) {}
         }
@@ -112,7 +123,7 @@
         function playMedia() {
             if (!settings.mediaList) return;
             const url = settings.mediaList[mediaIdx];
-            const isVid = url.match(/\.(mp4|webm|ogg)/i);
+            const isVid = url.toLowerCase().match(/\.(mp4|webm|ogg)/i);
             const img = document.getElementById('media-img'); const vid = document.getElementById('media-vid');
             clearTimeout(mediaTimer);
             if (isVid) {
@@ -126,10 +137,11 @@
         function nextMedia() { mediaIdx = (mediaIdx + 1) % settings.mediaList.length; playMedia(); }
 
         setInterval(() => {
-            const s1 = document.getElementById('screen1'); const s2 = document.getElementById('screen2'); const f = document.getElementById('site-footer');
-            if (currentScreen === 1) { s1.classList.remove('active'); s2.classList.add('active'); f.classList.add('hidden'); currentScreen = 2; }
-            else { s2.classList.remove('active'); s1.classList.add('active'); f.classList.remove('hidden'); currentScreen = 1; }
+            const s1 = document.getElementById('screen1'); const s2 = document.getElementById('screen2');
+            if (currentScreen === 1) { s1.classList.remove('active'); s2.classList.add('active'); currentScreen = 2; }
+            else { s2.classList.remove('active'); s1.classList.add('active'); currentScreen = 1; }
         }, 30000);
+        setInterval(fetchGoldData, 300000);
     </script>
 </body>
 </html>
