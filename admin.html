@@ -15,11 +15,12 @@
         input, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; }
         .color-row { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; }
         .cp-wrap { display: flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #eee; flex: 1; min-width: 150px; }
-        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
-        .hex-code { font-size: 12px; font-weight: bold; color: #666; }
+        input[type="color"] { border: none; width: 45px; height: 45px; cursor: pointer; background: none; }
+        .hex-code { font-size: 13px; font-weight: bold; color: #4a148c; }
         button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
         .btn-login { background: #4a148c; color: white; width: 100%; }
         .btn-save { background: #28a745; color: white; margin-top: 20px; width: 100%; }
+        .status-box { background: #e3f2fd; padding: 10px; border-radius: 8px; font-size: 14px; color: #1565c0; border: 1px solid #bbdefb; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -31,18 +32,28 @@
 
     <div id="admin-content">
         <h2>⚙️ ตั้งค่าระบบป้ายบารมี</h2>
+        
+        <div class="status-box">
+            📢 <b>โหมดสื่อโฆษณา:</b> บังคับดึงไฟล์ video.mp4 และ slide1-3.png จาก GitHub อัตโนมัติ
+        </div>
+
         <div class="field"><label>ข้อความตัววิ่ง:</label><textarea id="in-ticker" rows="3"></textarea></div>
         <div class="field"><label>ความเร็วตัววิ่ง (วินาที):</label><input type="number" id="in-speed"></div>
-        <div class="field">
-            <label>รายการสื่อโฆษณา (video.mp4, slide1.png...):</label>
-            <textarea id="in-media" rows="4"></textarea>
-            <small style="color:gray;">ใส่ชื่อไฟล์บรรทัดละ 1 ไฟล์ (จะดึงจาก GitHub อัตโนมัติ)</small>
-        </div>
+        
         <label>ชุดสี Theme:</label>
         <div class="color-row">
-            <div class="cp-wrap"><input type="color" id="in-dark" oninput="updateHex(this)"><div class="hex-code">#000000</div><span>สีมืด</span></div>
-            <div class="cp-wrap"><input type="color" id="in-bright" oninput="updateHex(this)"><div class="hex-code">#000000</div><span>สีสว่าง</span></div>
-            <div class="cp-wrap"><input type="color" id="in-light" oninput="updateHex(this)"><div class="hex-code">#000000</div><span>พื้นราคา</span></div>
+            <div class="cp-wrap">
+                <input type="color" id="in-dark" oninput="updateUI(this)">
+                <div><div class="hex-code" id="hex-dark">#000000</div><span style="font-size:11px;">สีมืด</span></div>
+            </div>
+            <div class="cp-wrap">
+                <input type="color" id="in-bright" oninput="updateUI(this)">
+                <div><div class="hex-code" id="hex-bright">#000000</div><span style="font-size:11px;">สีสว่าง</span></div>
+            </div>
+            <div class="cp-wrap">
+                <input type="color" id="in-light" oninput="updateUI(this)">
+                <div><div class="hex-code" id="hex-light">#000000</div><span style="font-size:11px;">พื้นราคา</span></div>
+            </div>
         </div>
         <button class="btn-save" id="btn-save-data">บันทึกข้อมูลและอัปเดตป้าย</button>
     </div>
@@ -60,10 +71,9 @@
         const db = getDatabase(app);
         const settingsRef = ref(db, 'settings');
 
-        // *** สำคัญ: แก้ไข URL GitHub ของคุณที่นี่ ***
-        const GITHUB_BASE_URL = "https://your-github-username.github.io/your-repo-name/";
-
-        window.updateHex = (el) => el.previousElementSibling ? null : el.nextElementSibling.innerText = el.value.toUpperCase();
+        window.updateUI = (el) => {
+            el.nextElementSibling.querySelector('.hex-code').innerText = el.value.toUpperCase();
+        };
 
         window.checkPass = () => {
             if (document.getElementById('pass-input').value === '987654321') {
@@ -79,29 +89,27 @@
                 if (data) {
                     document.getElementById('in-ticker').value = data.tickerText;
                     document.getElementById('in-speed').value = data.tickerSpeed;
-                    const fileNames = data.mediaList.map(url => url.replace(GITHUB_BASE_URL, ""));
-                    document.getElementById('in-media').value = fileNames.join('\n');
+                    
                     ['dark','bright','light'].forEach(c => {
-                        const el = document.getElementById('in-' + c);
-                        el.value = data['color' + c.charAt(0).toUpperCase() + c.slice(1)];
-                        el.nextElementSibling.innerText = el.value.toUpperCase();
+                        const val = data['color' + c.charAt(0).toUpperCase() + c.slice(1)];
+                        const input = document.getElementById('in-' + c);
+                        input.value = val;
+                        document.getElementById('hex-' + c).innerText = val.toUpperCase();
                     });
                 }
             });
         }
 
         document.getElementById('btn-save-data').onclick = () => {
-            const files = document.getElementById('in-media').value.split('\n').filter(f => f.trim() !== "");
-            const fullUrls = files.map(f => f.startsWith('http') ? f : GITHUB_BASE_URL + f.trim());
             const up = {
                 tickerText: document.getElementById('in-ticker').value,
                 tickerSpeed: parseInt(document.getElementById('in-speed').value) || 35,
-                mediaList: fullUrls,
+                // เก็บค่าสี แต่เรื่องไฟล์ระบบจะบังคับที่หน้า index เอง
                 colorDark: document.getElementById('in-dark').value,
                 colorBright: document.getElementById('in-bright').value,
                 colorLight: document.getElementById('in-light').value
             };
-            set(settingsRef, up).then(() => alert('บันทึกสำเร็จ! ป้ายจะอัปเดตทันที'));
+            set(settingsRef, up).then(() => alert('บันทึกสำเร็จ! ป้ายจะอัปเดตสีและข้อความทันที'));
         };
     </script>
 </body>
