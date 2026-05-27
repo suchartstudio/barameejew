@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baramee Gold Signage - Display (Updated Path)</title>
+    <title>Baramee Gold Signage - Display (Table Layout)</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="data:,">
     <style>
@@ -31,6 +31,7 @@
         }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 5; }
 
+        /* --- หน้า 1: ราคาทอง + สื่อวิดีโอ --- */
         .screen1-layout { flex-direction: row; gap: 2vw; }
         .left-panel { width: 40%; display: flex; flex-direction: column; }
         .right-panel { 
@@ -38,11 +39,8 @@
             border-radius: 25px; overflow: hidden; display: flex; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        /* ปรับให้ภาพ/วิดีโอยืดเต็มกรอบ */
         .media-item { width: 100%; height: 100%; object-fit: fill; display: none; }
         .media-active { display: block; }
-
         .card { background-color: var(--bg-white); border: 5px solid var(--bg-bright); border-radius: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .card-header { background-color: var(--bg-red); color: var(--text-yellow); font-size: 4vh; font-weight: 800; text-align: center; padding: 1.5vh 0; border-bottom: 4px solid var(--text-yellow); }
         .price-container { flex: 1; display: flex; flex-direction: column; padding: 2vh 1.5vw; gap: 2vh; }
@@ -50,12 +48,45 @@
         .price-label { font-size: 3.5vh; color: var(--text-white); background-color: var(--bg-dark); font-weight: 700; padding: 1vh 0; text-align: center; }
         .price-value { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10vh; font-weight: 800; color: var(--text-black); }
 
-        .screen2-layout { flex-direction: column; gap: 2vh; }
-        .main-price-card { background-color: var(--bg-light); border: 4px solid var(--bg-dark); border-radius: 20px; padding: 1.5vh 3vw; display: flex; justify-content: space-between; align-items: center; height: 12%; }
-        .grid-container { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5vh 1.5vw; }
-        .percent-box { background-color: var(--bg-dark); border: 3px solid var(--bg-bright); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
-        .percent-value { background-color: var(--bg-light); color: #000; width: 85%; text-align: center; border-radius: 10px; font-size: 5.5vh; font-weight: 800; margin-top: 0.5vh; padding: 0.3vh 0; }
+        /* --- หน้า 2: ตารางราคาทอง 2 คอลัมน์ --- */
+        .screen2-layout { flex-direction: column; }
+        .table-container {
+            flex: 1; display: flex; flex-direction: column;
+            background-color: var(--bg-white); border: 5px solid var(--bg-dark);
+            border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .table-header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5vh 4vw; background-color: var(--bg-light);
+            border-bottom: 4px solid var(--bg-dark); font-size: 4vh; font-weight: 800; color: var(--text-black);
+        }
+        .table-subheader {
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr;
+            background-color: var(--bg-dark); color: var(--text-white);
+            font-size: 3.5vh; font-weight: 700; text-align: center;
+            padding: 1.5vh 0; border-bottom: 3px solid var(--bg-bright);
+        }
+        .grid-rows {
+            display: flex; flex-direction: column; flex: 1;
+        }
+        .table-row {
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr;
+            font-size: 4.5vh; font-weight: 700; text-align: center;
+            flex: 1; /* ขยายให้เต็มพื้นที่ความสูงตาราง */
+        }
+        .table-row:nth-child(even) { background-color: rgba(0,0,0,0.03); }
+        .table-row > div {
+            display: flex; justify-content: center; align-items: center;
+            border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;
+        }
+        .table-row > div:last-child { border-right: none; }
+        .text-percent { color: var(--bg-dark); font-weight: 800; }
+        .text-price {
+            color: var(--text-black); background-color: var(--bg-light);
+            padding: 0.5vh 0; width: 85%; border-radius: 12px; font-weight: 800;
+        }
 
+        /* Footer ตัววิ่ง */
         footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; }
         .ticker { display: inline-block; white-space: nowrap; padding-left: 100vw; animation: marquee var(--ticker-speed) linear infinite; font-size: 4.5vh; font-weight: 700; color: #fff; text-shadow: 0 0 8px var(--bg-bright); }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
@@ -82,12 +113,22 @@
                 <video id="media-vid" class="media-item" muted autoplay playsinline></video>
             </div>
         </div>
+        
         <div id="screen2" class="screen screen2-layout">
-            <div class="main-price-card">
-                <h2 style="font-size: 4vh; margin:0;">ราคาทองคำแท่งรับซื้อล่าสุด</h2>
-                <div style="font-size:7vh; font-weight:800; color:var(--bg-dark);"><span id="main-bar-buy">...</span> บาท</div>
+            <div class="table-container">
+                <div class="table-header-top">
+                    <span>ราคาทองคำแท่งรับซื้อล่าสุด</span>
+                    <span><span id="main-bar-buy" style="font-size: 6vh; color: var(--bg-dark);">...</span> บาท</span>
+                </div>
+                <div class="table-subheader">
+                    <div>เปอร์เซ็น</div>
+                    <div>ราคา/กรัม</div>
+                    <div>เปอร์เซ็น</div>
+                    <div>ราคา/กรัม</div>
+                </div>
+                <div id="percent-grid" class="grid-rows">
+                    </div>
             </div>
-            <div id="percent-grid" class="grid-container"></div>
         </div>
     </main>
     <footer id="site-footer"><div class="ticker" id="ticker-text">...</div></footer>
@@ -106,9 +147,11 @@
         const settingsRef = ref(db, 'settings');
 
         const API_URL = 'https://api.chnwt.dev/thai-gold-api/latest';
-        const percentages = [90, 85, 80, 75, 70, 60, 58, 50, 40, 37, 30, 20];
         
-        // บังคับดึงไฟล์จาก GitHub Pages ของคุณโดยตรง
+        // เปอร์เซ็นต์ทองตามที่คุณระบุ (ซ้าย 6 ตัว, ขวา 6 ตัว)
+        const percentages = [30, 35, 40, 50, 60, 70, 75, 80, 85, 90, 96.5, 99.99];
+        
+        // --- อย่าลืมเปลี่ยน URL GitHub ของคุณที่นี่ ---
         const GITHUB_PATH = "https://suchartstudio.github.io/barameejew/"; 
         const forcedMedia = [
             GITHUB_PATH + "video.mp4",
@@ -151,11 +194,27 @@
                     const round = data.response.update_round ? ` (ครั้งที่ ${data.response.update_round})` : "";
                     document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${dateThai} เวลา ${timeStr}${round}`;
 
-                    const grid = document.getElementById('percent-grid'); grid.innerHTML = '';
-                    percentages.forEach(p => {
-                        const val = Math.round(buy * 0.0656 * (p / 100)).toLocaleString();
-                        grid.innerHTML += `<div class="percent-box"><div style="font-size:2.5vh; font-weight:700;">ทอง ${p}%</div><div class="percent-value">${val}</div></div>`;
-                    });
+                    // สร้างตาราง 2 คอลัมน์ (6 แถว)
+                    const grid = document.getElementById('percent-grid'); 
+                    grid.innerHTML = '';
+                    
+                    for (let i = 0; i < 6; i++) {
+                        // ดึงข้อมูลฝั่งซ้าย (Index 0-5) และฝั่งขวา (Index 6-11)
+                        const p1 = percentages[i];
+                        const p2 = percentages[i + 6];
+                        
+                        const val1 = Math.round(buy * 0.0656 * (p1 / 100)).toLocaleString();
+                        const val2 = Math.round(buy * 0.0656 * (p2 / 100)).toLocaleString();
+                        
+                        grid.innerHTML += `
+                            <div class="table-row">
+                                <div class="text-percent">${p1}%</div>
+                                <div><span class="text-price">${val1}</span></div>
+                                <div class="text-percent">${p2}%</div>
+                                <div><span class="text-price">${val2}</span></div>
+                            </div>
+                        `;
+                    }
                 }
             } catch (e) { console.error(e); }
         }
@@ -195,7 +254,7 @@
             const s2 = document.getElementById('screen2');
             if (num === 2) {
                 s1.classList.remove('active'); s2.classList.add('active');
-                setTimeout(() => switchToScreen(1), 30000);
+                setTimeout(() => switchToScreen(1), 30000); // โชว์ตารางทอง 30 วิ
             } else {
                 s2.classList.remove('active'); s1.classList.add('active');
                 playMedia();
