@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baramee Gold Signage - Display (Table Layout)</title>
+    <title>Baramee Gold Signage - Display (+1500 Calculation)</title>
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="data:,">
     <style>
@@ -72,7 +72,7 @@
         .table-row {
             display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr;
             font-size: 4.5vh; font-weight: 700; text-align: center;
-            flex: 1; /* ขยายให้เต็มพื้นที่ความสูงตาราง */
+            flex: 1; 
         }
         .table-row:nth-child(even) { background-color: rgba(0,0,0,0.03); }
         .table-row > div {
@@ -114,10 +114,12 @@
             </div>
         </div>
         
+        <!-- หน้า 2: ตาราง 2 คอลัมน์ ซ้าย-ขวา -->
         <div id="screen2" class="screen screen2-layout">
             <div class="table-container">
                 <div class="table-header-top">
-                    <span>ราคาทองคำแท่งรับซื้อล่าสุด</span>
+                    <!-- เพิ่มคำว่า (+1,500) ให้ชัดเจน -->
+                    <span>ราคาทองคำแท่งรับซื้อล่าสุด <span style="color: var(--bg-red); font-size: 3vh;">(+1,500)</span></span>
                     <span><span id="main-bar-buy" style="font-size: 6vh; color: var(--bg-dark);">...</span> บาท</span>
                 </div>
                 <div class="table-subheader">
@@ -127,7 +129,8 @@
                     <div>ราคา/กรัม</div>
                 </div>
                 <div id="percent-grid" class="grid-rows">
-                    </div>
+                    <!-- ข้อมูลแถวจะถูกสร้างด้วย JS -->
+                </div>
             </div>
         </div>
     </main>
@@ -148,10 +151,8 @@
 
         const API_URL = 'https://api.chnwt.dev/thai-gold-api/latest';
         
-        // เปอร์เซ็นต์ทองตามที่คุณระบุ (ซ้าย 6 ตัว, ขวา 6 ตัว)
         const percentages = [30, 35, 40, 50, 60, 70, 75, 80, 85, 90, 96.5, 99.99];
         
-        // --- อย่าลืมเปลี่ยน URL GitHub ของคุณที่นี่ ---
         const GITHUB_PATH = "https://suchartstudio.github.io/barameejew/"; 
         const forcedMedia = [
             GITHUB_PATH + "video.mp4",
@@ -183,10 +184,19 @@
             try {
                 const res = await fetch(API_URL); const data = await res.json();
                 if (data.status === 'success') {
-                    const buy = parseFloat(data.response.price.gold_bar.buy.replace(/,/g, ''));
-                    document.getElementById('bar-buy').innerText = Math.round(buy).toLocaleString();
-                    document.getElementById('bar-sell').innerText = Math.round(parseFloat(data.response.price.gold_bar.sell.replace(/,/g, ''))).toLocaleString();
-                    document.getElementById('main-bar-buy').innerText = Math.round(buy).toLocaleString();
+                    // ราคากลางปกติจาก API
+                    const baseBuy = parseFloat(data.response.price.gold_bar.buy.replace(/,/g, ''));
+                    const baseSell = parseFloat(data.response.price.gold_bar.sell.replace(/,/g, ''));
+                    
+                    // คำนวณราคาหน้า 2 โดยบวก 1500
+                    const modifiedBuy = baseBuy + 1500;
+
+                    // อัปเดตหน้า 1 (ใช้ราคาปกติ)
+                    document.getElementById('bar-buy').innerText = Math.round(baseBuy).toLocaleString();
+                    document.getElementById('bar-sell').innerText = Math.round(baseSell).toLocaleString();
+                    
+                    // อัปเดตหน้า 2 (ใช้ราคาที่บวก 1500 แล้ว)
+                    document.getElementById('main-bar-buy').innerText = Math.round(modifiedBuy).toLocaleString();
                     
                     const now = new Date();
                     const dateThai = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -194,17 +204,17 @@
                     const round = data.response.update_round ? ` (ครั้งที่ ${data.response.update_round})` : "";
                     document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${dateThai} เวลา ${timeStr}${round}`;
 
-                    // สร้างตาราง 2 คอลัมน์ (6 แถว)
+                    // สร้างตาราง 2 คอลัมน์ โดยใช้ "modifiedBuy" (ที่บวก 1500 แล้ว) เป็นฐานคำนวณ
                     const grid = document.getElementById('percent-grid'); 
                     grid.innerHTML = '';
                     
                     for (let i = 0; i < 6; i++) {
-                        // ดึงข้อมูลฝั่งซ้าย (Index 0-5) และฝั่งขวา (Index 6-11)
                         const p1 = percentages[i];
                         const p2 = percentages[i + 6];
                         
-                        const val1 = Math.round(buy * 0.0656 * (p1 / 100)).toLocaleString();
-                        const val2 = Math.round(buy * 0.0656 * (p2 / 100)).toLocaleString();
+                        // ใช้ modifiedBuy คำนวณราคาทองต่อกรัม
+                        const val1 = Math.round(modifiedBuy * 0.0656 * (p1 / 100)).toLocaleString();
+                        const val2 = Math.round(modifiedBuy * 0.0656 * (p2 / 100)).toLocaleString();
                         
                         grid.innerHTML += `
                             <div class="table-row">
@@ -254,7 +264,7 @@
             const s2 = document.getElementById('screen2');
             if (num === 2) {
                 s1.classList.remove('active'); s2.classList.add('active');
-                setTimeout(() => switchToScreen(1), 90000); // โชว์ตารางทอง 90 วิ
+                setTimeout(() => switchToScreen(1), 30000); 
             } else {
                 s2.classList.remove('active'); s1.classList.add('active');
                 playMedia();
