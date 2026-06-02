@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baramee Gold Signage - 3 Screens</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet\">\n    <link rel="icon" href="data:,">
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:,">
     <style>
         :root {
             --bg-dark: #4a148c; --bg-bright: #d500f9; --bg-light: #f0d9ff;  
@@ -15,275 +16,217 @@
         
         header { 
             height: 12vh; background-color: var(--bg-dark); color: var(--text-white); 
-            display: flex; justify-content: space-between; align-items: center; padding: 0 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            border-bottom: 5px solid var(--bg-bright); box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 10; 
         }
-        .logo-section { display: flex; align-items: center; gap: 15px; }
-        .logo-title { font-size: 2.5rem; font-weight: 800; letter-spacing: 1px; color: var(--text-yellow); text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
-        .logo-sub { font-size: 1.2rem; color: var(--text-white); opacity: 0.9; }
-        .time-section { text-align: right; font-size: 1.2rem; opacity: 0.9; font-weight: 600; }
+        .header-title { font-size: 5vh; font-weight: 800; line-height: 1.1; }
+        #last-update { font-size: 2.5vh; font-weight: 400; margin-top: 5px; opacity: 0.9; color: var(--text-yellow); }
 
-        .main-container { flex: 1; position: relative; width: 100vw; overflow: hidden; }
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in-out; display: flex; padding: 20px; box-sizing: border-box; gap: 20px; }
-        .screen.active { opacity: 1; pointer-events: auto; }
+        main { flex: 1; position: relative; width: 100%; }
+        .screen { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            padding: 2vh 2vw; box-sizing: border-box; display: flex; 
+            opacity: 0; transition: opacity 1s ease-in-out; pointer-events: none; 
+            padding-bottom: 11vh; 
+        }
+        .screen.active { opacity: 1; pointer-events: auto; z-index: 5; }
 
-        /* Screen 1 Layout */
-        .price-side { width: 45%; display: flex; flex-direction: column; gap: 20px; }
-        .media-side { width: 55%; background: #000; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.4); position: relative; }
-        .media-content { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; opacity:0; transition: opacity 0.5s ease; }
-        .media-content.media-active { opacity: 1; }
+        /* Media */
+        .screen1-layout { flex-direction: row; gap: 2vw; }
+        .left-panel { width: 40%; display: flex; flex-direction: column; }
+        .right-panel { width: 60%; background-color: #000; border: 6px solid var(--bg-bright); border-radius: 25px; overflow: hidden; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .media-item { width: 100%; height: 100%; object-fit: fill; display: none; }
+        .media-active { display: block; }
 
-        /* UI Cards */
-        .card { background: var(--bg-white); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.2); border: 4px solid var(--bg-light); }
-        .card-title { font-size: 1.8rem; font-weight: 700; color: var(--bg-dark); margin-bottom: 10px; border-bottom: 3px solid var(--bg-light); padding-bottom: 5px; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-        .price-label { font-size: 2.2rem; font-weight: 700; color: var(--text-black); }
-        .price-val { font-size: 4.5rem; font-weight: 800; color: var(--bg-red); text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-        .price-unit { font-size: 1.8rem; font-weight: 600; color: #555; }
+        .card { background-color: var(--bg-white); border: 5px solid var(--bg-bright); border-radius: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .card-header { background-color: var(--bg-red); color: var(--text-yellow); font-size: 4vh; font-weight: 800; text-align: center; padding: 1.5vh 0; border-bottom: 4px solid var(--text-yellow); }
+        .price-container { flex: 1; display: flex; flex-direction: column; padding: 2vh 1.5vw; gap: 2vh; }
+        .price-box { flex: 1; background-color: var(--bg-light); border: 5px solid var(--bg-dark); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .price-label { font-size: 3.5vh; color: var(--text-white); background-color: var(--bg-dark); font-weight: 700; padding: 1vh 0; text-align: center; }
+        .price-value { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10vh; font-weight: 800; color: var(--text-black); }
 
-        /* Full Screen Grid Layout (Screen 2 & 3) */
-        .full-screen-layout { width: 100%; display: flex; flex-direction: column; gap: 15px; }
-        .grid-header-bar { background: var(--bg-dark); color: var(--text-white); padding: 15px 30px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .grid-title { font-size: 2.2rem; font-weight: 700; color: var(--text-yellow); }
-        .grid-base-info { font-size: 1.6rem; font-weight: 600; }
-        
-        .gold-grid { display: grid; grid-template-columns: repeat(4, 1-fr); gap: 15px; flex: 1; }
-        @media (min-width: 1200px) { .gold-grid { grid-template-columns: repeat(4, 1fr); } }
-        
-        .grid-item { background: var(--bg-white); border-radius: 15px; padding: 15px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid var(--bg-light); text-align: center; }
-        .pct-title { font-size: 1.8rem; font-weight: 800; color: var(--bg-dark); background: var(--bg-light); padding: 5px; border-radius: 8px; }
-        .price-per-gram { font-size: 2.8rem; font-weight: 800; color: var(--bg-red); margin: 10px 0; }
-        .price-per-baht { font-size: 1.3rem; font-weight: 600; color: #444; border-top: 1px dashed #ccc; padding-top: 5px; }
+        /* Tables */
+        .screen2-layout { flex-direction: column; }
+        .table-container { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-white); border: 5px solid var(--bg-dark); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .table-header-top { display: flex; justify-content: space-between; align-items: center; padding: 1.5vh 4vw; background-color: var(--bg-light); border-bottom: 4px solid var(--bg-dark); font-size: 4vh; font-weight: 800; color: var(--text-black); }
+        .table-subheader { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr; background-color: var(--bg-dark); color: var(--text-white); font-size: 3.5vh; font-weight: 700; text-align: center; padding: 1.5vh 0; border-bottom: 3px solid var(--bg-bright); }
+        .grid-rows { display: flex; flex-direction: column; flex: 1; }
+        .table-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr; font-size: 4.5vh; font-weight: 700; text-align: center; flex: 1; }
+        .table-row:nth-child(even) { background-color: rgba(0,0,0,0.03); }
+        .table-row > div { display: flex; justify-content: center; align-items: center; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+        .table-row > div:last-child { border-right: none; }
+        .text-percent { color: var(--bg-dark); font-weight: 800; }
+        .text-price { color: var(--text-black); background-color: var(--bg-light); padding: 0.5vh 0; width: 85%; border-radius: 12px; font-weight: 800; }
 
-        /* Ticker Footer */
-        footer { height: 6vh; background: #000; color: var(--text-yellow); font-size: 1.6rem; font-weight: 600; display: flex; align-items: center; overflow: hidden; position: relative; box-shadow: 0 -4px 15px rgba(0,0,0,0.3); }
-        .ticker-wrap { width: 100%; overflow: hidden; }
-        .ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: marquee var(--ticker-speed) linear infinite; }
-        @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        footer { height: 8vh; background-color: var(--text-black); border-top: 4px solid var(--bg-bright); position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; z-index: 20; }
+        .ticker { display: inline-block; white-space: nowrap; padding-left: 100vw; animation: marquee var(--ticker-speed) linear infinite; font-size: 4.5vh; font-weight: 700; color: #fff; text-shadow: 0 0 8px var(--bg-bright); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
     </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">บารมี แอนติกจิวเวลรี่</div>
+        <div id="last-update">อัปเดตข้อมูลล่าสุด: กำลังโหลด...</div>
+    </header>
+    <main>
+        <div id="screen1" class="screen screen1-layout active">
+            <div class="left-panel">
+                <div class="card">
+                    <div class="card-header">ราคาทองคำแท่ง (บาทละ)</div>
+                    <div class="price-container">
+                        <div class="price-box"><div class="price-label">รับซื้อคืน</div><div id="bar-buy" class="price-value">...</div></div>
+                        <div class="price-box"><div class="price-label">ขายออก</div><div id="bar-sell" class="price-value">...</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <img id="media-img" class="media-item">
+                <video id="media-vid" class="media-item" muted autoplay playsinline></video>
+            </div>
+        </div>
+        
+        <div id="screen2" class="screen screen2-layout">
+            <div class="table-container">
+                <div class="table-header-top">
+                    <span>ราคาทองคำแท่งรับซื้อ (ชิ้นงาน, ไม่หลอม)</span>
+                    <span><span id="buy-raw" style="font-size: 6vh; color: var(--bg-dark);">...</span> บาท</span>
+                </div>
+                <div class="table-subheader"><div>เปอร์เซ็น</div><div>ราคา/กรัม</div><div>เปอร์เซ็น</div><div>ราคา/กรัม</div></div>
+                <div id="grid-raw" class="grid-rows"></div>
+            </div>
+        </div>
+
+        <div id="screen3" class="screen screen2-layout">
+            <div class="table-container">
+                <div class="table-header-top">
+                    <span>ราคาทองคำแท่งรับซื้อ (+1,500 หลอมก้อน)</span>
+                    <span><span id="buy-mod" style="font-size: 6vh; color: var(--bg-dark);">...</span> บาท</span>
+                </div>
+                <div class="table-subheader"><div>เปอร์เซ็น</div><div>ราคา/กรัม</div><div>เปอร์เซ็น</div><div>ราคา/กรัม</div></div>
+                <div id="grid-mod" class="grid-rows"></div>
+            </div>
+        </div>
+    </main>
+    <footer id="site-footer"><div class="ticker" id="ticker-text">...</div></footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        // คอนฟิก Firebase ของโปรเจกต์คุณ
-        const firebaseConfig = {
-            databaseURL: "https://suchartstudio-default-rtdb.firebaseio.com/"
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", 
+            authDomain: "signage-eac53.firebaseapp.com", 
+            projectId: "signage-eac53", 
+            storageBucket: "signage-eac53.firebasestorage.app", 
+            messagingSenderId: "184834384558", 
+            appId: "1:184834384558:web:6971ad2a33d07c0236c33f" 
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const settingsRef = ref(db, 'settings');
 
-        // URL ดึงข้อมูลราคาทองคำจาก API ฮั่วเซ่งเฮง
+        // อัปเดต API ใหม่ตามที่ร้องขอ
         const API_URL = 'https://apicheckpricev3.huasengheng.com/api/Values/GetPrice';
         const percentages = [30, 35, 40, 50, 60, 70, 75, 80, 85, 90, 96.5, 99.99];
-        
-        // พาธไฟล์สื่อบน GitHub Pages
         const GITHUB_PATH = "https://suchartstudio.github.io/barameejew/"; 
-        const forcedMedia = [
-            GITHUB_PATH + "video.mp4", 
-            GITHUB_PATH + "slide1.png", 
-            GITHUB_PATH + "slide2.png", 
-            GITHUB_PATH + "slide3.png"
-        ];
+        const forcedMedia = [GITHUB_PATH + "video.mp4", GITHUB_PATH + "slide1.png", GITHUB_PATH + "slide2.png", GITHUB_PATH + "slide3.png"];
 
-        let settings = {};
-        let mediaIdx = 0;
-        let mediaTimer;
-        let currentScreen = 1;
+        let settings = {}; let mediaIdx = 0; let mediaTimer; let currentScreen = 1;
 
-        // รับค่าการตั้งค่าแบบ Real-time จาก Firebase (ข้อความวิ่ง / สีธีม)
-        onValue(settingsRef, (snapshot) => {
-            const data = snapshot.val();
+        onValue(settingsRef, (snap) => {
+            const data = snap.val();
             if (data) {
                 settings = data;
-                document.getElementById('ticker-msg').innerText = data.tickerText || "ยินดีต้อนรับสู่ บารมี แอนติกจิวเวลรี่";
-                document.documentElement.style.setProperty('--ticker-speed', `${data.tickerSpeed || 35}s`);
-                if (data.colorDark) document.documentElement.style.setProperty('--bg-dark', data.colorDark);
-                if (data.colorBright) document.documentElement.style.setProperty('--bg-bright', data.colorBright);
-                if (data.colorLight) document.documentElement.style.setProperty('--bg-light', data.colorLight);
+                document.documentElement.style.setProperty('--bg-dark', settings.colorDark);
+                document.documentElement.style.setProperty('--bg-bright', settings.colorBright);
+                document.documentElement.style.setProperty('--bg-light', settings.colorLight);
+                document.documentElement.style.setProperty('--ticker-speed', settings.tickerSpeed + 's');
+                document.getElementById('ticker-text').innerText = settings.tickerText;
+                fetchGoldData(); if(currentScreen === 1) playMedia();
             }
         });
 
-        // ฟังก์ชันดึงราคาทองจากฮั่วเซ่งเฮง
         async function fetchGoldData() {
             try {
                 const res = await fetch(API_URL); 
                 const data = await res.json();
                 
+                // ตรวจสอบข้อมูล Array ที่ส่งกลับมาจาก API
                 if (data && data.length > 0) {
-                    // ดึงข้อมูลชุดแรก (ทองคำแท่ง 96.5%)
-                    const goldData = data[0]; 
+                    const goldData = data[0]; // ดึงข้อมูลก้อนแรกซึ่งมักจะเป็นราคาสมาคม (96.5)
 
-                    // นำคอมมาออก (ถ้ามี) แล้วแปลงเป็นตัวเลขเพื่อคำนวณสัดส่วน
-                    const baseBuy = parseFloat(goldData.Buy.replace(/,/g, ''));
-                    const baseSell = parseFloat(goldData.Sell.replace(/,/g, ''));
+                    // แปลงค่าจาก string เป็น float (ลบเครื่องหมายจุลภาคถ้ามี)
+                    const baseBuy = parseFloat(String(goldData.Buy).replace(/,/g, '')) || goldData.Bid;
+                    const baseSell = parseFloat(String(goldData.Sell).replace(/,/g, '')) || goldData.Ask;
                     const modifiedBuy = baseBuy + 1500;
 
-                    // อัปเดตราคาหน้าร้าน (หน้าจอที่ 1)
                     document.getElementById('bar-buy').innerText = Math.round(baseBuy).toLocaleString();
                     document.getElementById('bar-sell').innerText = Math.round(baseSell).toLocaleString();
                     document.getElementById('buy-raw').innerText = Math.round(baseBuy).toLocaleString();
                     document.getElementById('buy-mod').innerText = Math.round(modifiedBuy).toLocaleString();
 
-                    // อัปเดตเวลาอัปเดตล่าสุด โดยใช้ข้อความจาก API ฮั่วเซ่งเฮง
-                    document.getElementById('last-update').innerText = goldData.StrTimeUpdate || "ไม่สามารถดึงเวลาอัปเดตได้";
+                    // อัปเดตเวลาให้ตรงกับข้อมูลที่ได้จาก API ใหม่
+                    if (goldData.StrTimeUpdate) {
+                        document.getElementById('last-update').innerText = goldData.StrTimeUpdate;
+                    } else {
+                        const now = new Date();
+                        const dateThai = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+                        const timeStr = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
+                        document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${dateThai} เวลา ${timeStr}`;
+                    }
 
-                    // คำนวณตารางแยกเปอร์เซ็นต์ (หน้าจอที่ 2 และ 3)
                     renderTable('grid-raw', baseBuy);
                     renderTable('grid-mod', modifiedBuy);
                 }
             } catch (e) { 
-                console.error("ดึงข้อมูลราคาทองไม่สำเร็จ:", e); 
+                console.error("Error fetching gold data:", e); 
             }
         }
 
-        // ฟังก์ชันคำนวณและวาดตารางราคาทองแยกตามเปอร์เซ็นต์ทอง
-        function renderTable(targetId, basePrice) {
-            const container = document.getElementById(targetId);
-            container.innerHTML = '';
-            percentages.forEach(pct => {
-                // สูตรคำนวณราคาทองต่อกรัม: (ราคาทองคำแท่ง * 0.0656) * (เปอร์เซ็นต์ทอง / 100)
-                const pricePerGram = Math.round((basePrice * 0.0656) * (pct / 100));
-                const pricePerBaht = Math.round(basePrice * (pct / 96.5));
-                
-                const item = document.createElement('div');
-                item.className = 'grid-item';
-                item.innerHTML = `
-                    <div class="pct-title">ทอง ${pct}%</div>
-                    <div class="price-per-gram">${pricePerGram.toLocaleString()}<span style="font-size:1.2rem;font-weight:600;color:#333;"> /กรับ</span></div>
-                    <div class="price-per-baht">บ.ละประมาณ: ${pricePerBaht.toLocaleString()}</div>
-                `;
-                container.appendChild(item);
-            });
+        function renderTable(elementId, buyPrice) {
+            const grid = document.getElementById(elementId); grid.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const p1 = percentages[i]; const p2 = percentages[i + 6];
+                const val1 = Math.round(buyPrice * 0.0656 * (p1 / 100)).toLocaleString();
+                const val2 = Math.round(buyPrice * 0.0656 * (p2 / 100)).toLocaleString();
+                grid.innerHTML += `<div class="table-row"><div class="text-percent">${p1}%</div><div><span class="text-price">${val1}</span></div><div class="text-percent">${p2}%</div><div><span class="text-price">${val2}</span></div></div>`;
+            }
         }
 
-        // ระบบเล่นสื่อโฆษณา (วิดีโอ/รูปภาพ วนลูป)
         function playMedia() {
-            if (currentScreen !== 1) return;
+            if(currentScreen !== 1) return;
             const url = forcedMedia[mediaIdx];
             const isVid = url.toLowerCase().endsWith(".mp4");
-            const img = document.getElementById('media-img'); 
-            const vid = document.getElementById('media-vid');
-            
+            const img = document.getElementById('media-img'); const vid = document.getElementById('media-vid');
             clearTimeout(mediaTimer);
-            
             if (isVid) {
-                img.classList.remove('media-active'); 
-                vid.classList.add('media-active');
-                vid.src = url; 
-                vid.load();
-                vid.play().catch(() => setTimeout(nextMedia, 5000)); 
-                vid.onended = nextMedia;
+                img.classList.remove('media-active'); vid.classList.add('media-active');
+                vid.src = url; vid.load();
+                vid.play().catch(() => setTimeout(nextMedia, 5000)); vid.onended = nextMedia;
             } else {
-                vid.pause(); 
-                vid.classList.remove('media-active'); 
-                img.classList.add('media-active');
-                img.src = url; 
-                mediaTimer = setTimeout(nextMedia, 15000); // ภาพนิ่งแสดง 15 วินาที
+                vid.pause(); vid.classList.remove('media-active'); img.classList.add('media-active');
+                img.src = url; mediaTimer = setTimeout(nextMedia, 15000); 
             }
         }
 
         function nextMedia() {
             mediaIdx++;
             if (mediaIdx >= forcedMedia.length) {
-                mediaIdx = 0; 
-                switchToScreen(2); // เล่นสื่อครบทุกชิ้นแล้วสลับไปหน้าตารางราคาที่ 2
-            } else { 
-                playMedia(); 
-            }
+                mediaIdx = 0; switchToScreen(2); 
+            } else { playMedia(); }
         }
 
-        // ระบบควบคุมสลับหน้าจอ (1 -> 2 -> 3)
         function switchToScreen(num) {
             currentScreen = num;
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen'+num).classList.add('active');
             
-            if (num === 2) {
-                setTimeout(() => switchToScreen(3), 90000); // แสดงหน้าตารางปกติเป็นเวลา 90 วินาที
-            } else if (num === 3) {
-                setTimeout(() => switchToScreen(1), 90000); // แสดงหน้าตารางหลอมเป็นเวลา 90 วินาที
-            } else {
-                playMedia(); // วนกลับมาหน้าแรกเพื่อเริ่มเล่นวิดีโอและรูปภาพใหม่
-            }
+            if (num === 2) setTimeout(() => switchToScreen(3), 90000); // โชว์หน้า 2 ไป 90 วิ
+            else if (num === 3) setTimeout(() => switchToScreen(1), 90000); // โชว์หน้า 3 ไป 90 วิ
+            else playMedia(); // กลับมาหน้า 1 เริ่มเล่นสื่อ
         }
 
-        // เริ่มต้นการทำงานของระบบเมื่อเปิดหน้าเว็บ
-        fetchGoldData();
-        // ตั้งให้ดึงราคาทองคำใหม่แบบอัตโนมัติทุก ๆ 5 นาที
-        setInterval(fetchGoldData, 300000); 
-        
-        // เริ่มต้นแสดงผลหน้าจอแรก
-        switchToScreen(1);
+        setInterval(fetchGoldData, 300000);
     </script>
-</head>
-<body>
-
-    <header>
-        <div class="logo-section">
-            <div class="logo-title">บารมี แอนติกจิวเวลรี่</div>
-            <div class="logo-sub">|ระบบป้ายราคาทองคำดิจิทัลอัจฉริยะ</div>
-        </div>
-        <div class="time-section" id="last-update">กำลังโหลดเวลาอัปเดต...</div>
-    </header>
-
-    <main class="main-container">
-        
-        <div class="screen" id="screen1">
-            <div class="price-side">
-                <div class="card" style="flex:1;">
-                    <div class="card-title">ราคาทองคำแท่ง 96.5% (สมาคมฯ)</div>
-                    <div class="price-row">
-                        <div class="price-label">รับซื้อคืน</div>
-                        <div>
-                            <span class="price-val" id="bar-buy" style="color:#2e7d32;">00,000</span>
-                            <span class="price-unit"> บาท</span>
-                        </div>
-                    </div>
-                    <div class="price-row" style="margin-top:20px;">
-                        <div class="price-label">ขายออก</div>
-                        <div>
-                            <span class="price-val" id="bar-sell">00,000</span>
-                            <span class="price-unit"> บาท</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="media-side">
-                <img id="media-img" class="media-content" alt="Signage Slot">
-                <video id="media-vid" class="media-content" muted playsinline></video>
-            </div>
-        </div>
-
-        <div class="screen" id="screen2">
-            <div class="full-screen-layout">
-                <div class="grid-header-bar">
-                    <div class="grid-title">ตารางราคาทองคำแท่งรับซื้อคืน (ชิ้นงาน / ไม่หลอมก้อน)</div>
-                    <div class="grid-base-info">คำนวณจากฐานราคาสมาคมฯ: <span id="buy-raw" style="color:var(--text-yellow);font-weight:700;">-</span> บาท</div>
-                </div>
-                <div class="gold-grid" id="grid-raw"></div>
-            </div>
-        </div>
-
-        <div class="screen" id="screen3">
-            <div class="full-screen-layout">
-                <div class="grid-header-bar" style="background:var(--bg-bright);">
-                    <div class="grid-title">ตารางราคาทองคำแท่งรับซื้อคืน (+1,500 งานหลอมก้อน)</div>
-                    <div class="grid-base-info">คำนวณจากฐานราคาพิเศษ: <span id="buy-mod" style="color:var(--text-yellow);font-weight:700;">-</span> บาท</div>
-                </div>
-                <div class="gold-grid" id="grid-mod"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer>
-        <div class="ticker-wrap">
-            <div class="ticker-text" id="ticker-msg">กำลังโหลดข้อความประชาสัมพันธ์...</div>
-        </div>
-    </footer>
-
 </body>
 </html>
