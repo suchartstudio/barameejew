@@ -112,12 +112,21 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        const firebaseConfig = { apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", authDomain: "signage-eac53.firebaseapp.com", projectId: "signage-eac53", storageBucket: "signage-eac53.firebasestorage.app", messagingSenderId: "184834384558", appId: "1:184834384558:web:6971ad2a33d07c0236c33f" };
+        
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBCR9k_D1GiVugnFqsIxf33Ge96rCmhbZs", 
+            authDomain: "signage-eac53.firebaseapp.com", 
+            projectId: "signage-eac53", 
+            storageBucket: "signage-eac53.firebasestorage.app", 
+            messagingSenderId: "184834384558", 
+            appId: "1:184834384558:web:6971ad2a33d07c0236c33f" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const settingsRef = ref(db, 'settings');
 
-        const API_URL = 'https://api.chnwt.dev/thai-gold-api/latest';
+        // อัปเดต API ใหม่ตามที่ร้องขอ
+        const API_URL = 'https://apicheckpricev3.huasengheng.com/api/Values/GetPrice';
         const percentages = [30, 35, 40, 50, 60, 70, 75, 80, 85, 90, 96.5, 99.99];
         const GITHUB_PATH = "https://suchartstudio.github.io/barameejew/"; 
         const forcedMedia = [GITHUB_PATH + "video.mp4", GITHUB_PATH + "slide1.png", GITHUB_PATH + "slide2.png", GITHUB_PATH + "slide3.png"];
@@ -139,25 +148,39 @@
 
         async function fetchGoldData() {
             try {
-                const res = await fetch(API_URL); const data = await res.json();
-                if (data.status === 'success') {
-                    const baseBuy = parseFloat(data.response.price.gold_bar.buy.replace(/,/g, ''));
+                const res = await fetch(API_URL); 
+                const data = await res.json();
+                
+                // ตรวจสอบข้อมูล Array ที่ส่งกลับมาจาก API
+                if (data && data.length > 0) {
+                    const goldData = data[0]; // ดึงข้อมูลก้อนแรกซึ่งมักจะเป็นราคาสมาคม (96.5)
+
+                    // แปลงค่าจาก string เป็น float (ลบเครื่องหมายจุลภาคถ้ามี)
+                    const baseBuy = parseFloat(String(goldData.Buy).replace(/,/g, '')) || goldData.Bid;
+                    const baseSell = parseFloat(String(goldData.Sell).replace(/,/g, '')) || goldData.Ask;
                     const modifiedBuy = baseBuy + 1500;
 
                     document.getElementById('bar-buy').innerText = Math.round(baseBuy).toLocaleString();
-                    document.getElementById('bar-sell').innerText = Math.round(parseFloat(data.response.price.gold_bar.sell.replace(/,/g, ''))).toLocaleString();
+                    document.getElementById('bar-sell').innerText = Math.round(baseSell).toLocaleString();
                     document.getElementById('buy-raw').innerText = Math.round(baseBuy).toLocaleString();
                     document.getElementById('buy-mod').innerText = Math.round(modifiedBuy).toLocaleString();
 
-                    const now = new Date();
-                    const dateThai = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-                    const timeStr = data.response.update_time || now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
-                    document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${dateThai} เวลา ${timeStr}`;
+                    // อัปเดตเวลาให้ตรงกับข้อมูลที่ได้จาก API ใหม่
+                    if (goldData.StrTimeUpdate) {
+                        document.getElementById('last-update').innerText = goldData.StrTimeUpdate;
+                    } else {
+                        const now = new Date();
+                        const dateThai = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+                        const timeStr = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
+                        document.getElementById('last-update').innerText = `อัปเดตล่าสุด: ${dateThai} เวลา ${timeStr}`;
+                    }
 
                     renderTable('grid-raw', baseBuy);
                     renderTable('grid-mod', modifiedBuy);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Error fetching gold data:", e); 
+            }
         }
 
         function renderTable(elementId, buyPrice) {
