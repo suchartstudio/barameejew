@@ -147,45 +147,78 @@
 
         async function fetchGoldData() {
             try {
-                const res = await fetch(API_URL); 
-                const data = await res.json();
+                // ขอข้อมูลจาก API โดยพยายามรองรับทั้ง JSON และ XML
+                const res = await fetch(API_URL, {
+                    headers: { 'Accept': 'application/json, text/xml, application/xml' }
+                }); 
+                const text = await res.text();
                 
-                // ตรวจสอบข้อมูล Array ที่ส่งกลับมาจาก API
-                if (data && data.length > 0) {
-                    
-                    // ค้นหา Object ที่มี GoldType เป็น 'REF' (หรือดึงข้อมูล Array ชุดที่ 2 (index 1) มาใช้หากหา key ไม่เจอ)
-                    const goldData = data.find(item => item.GoldType === 'REF') || data[1];
+                let goldData = null;
 
-                    if (!goldData) return; // ป้องกัน error ในกรณีที่ไม่พบข้อมูล
-
-                    // แปลงค่าจาก string เป็น float (ลบเครื่องหมายจุลภาคถ้ามี) รองรับทั้ง Key ที่ชื่อ Buy/Sell หรือ Bid/Ask
-                    const baseBuy = parseFloat(String(goldData.Buy || '').replace(/,/g, '')) || parseFloat(goldData.Bid) || 0;
-                    const baseSell = parseFloat(String(goldData.Sell || '').replace(/,/g, '')) || parseFloat(goldData.Ask) || 0;
-                    const modifiedBuy = baseBuy + 1500;
-
-                    document.getElementById('bar-buy').innerText = Math.round(baseBuy).toLocaleString();
-                    document.getElementById('bar-sell').innerText = Math.round(baseSell).toLocaleString();
-                    document.getElementById('buy-raw').innerText = Math.round(baseBuy).toLocaleString();
-                    document.getElementById('buy-mod').innerText = Math.round(modifiedBuy).toLocaleString();
-
-                    // อัปเดตเวลา
-                    if (goldData.StrTimeUpdate) {
-                        document.getElementById('last-update').innerText = "อัปเดตข้อมูลล่าสุด: " + goldData.StrTimeUpdate;
-                    } else if (goldData.TimeUpdate) {
-                        const dateObj = new Date(goldData.TimeUpdate);
-                        const dateThai = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-                        const timeStr = dateObj.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
-                        document.getElementById('last-update').innerText = `อัปเดตข้อมูลล่าสุด: ${dateThai} เวลา ${timeStr}`;
-                    } else {
-                        const now = new Date();
-                        const dateThai = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-                        const timeStr = now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
-                        document.getElementById('last-update').innerText = `อัปเดตข้อมูลล่าสุด: ${dateThai} เวลา ${timeStr}`;
+                try {
+                    // ลองอ่านข้อมูลแบบ JSON ก่อนเผื่อ API รองรับ
+                    const data = JSON.parse(text);
+                    if (Array.isArray(data)) {
+                        goldData = data.find(item => item.GoldType === 'REF') || data[1];
                     }
-
-                    renderTable('grid-raw', baseBuy);
-                    renderTable('grid-mod', modifiedBuy);
+                } catch (jsonError) {
+                    // หากอ่านแบบ JSON ไม่ได้ แสดงว่าเป็นข้อมูล XML แน่นอน (DOMParser จัดการ)
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(text, "text/xml");
+                    const structs = xmlDoc.getElementsByTagName("GoldPriceStruct");
+                    
+                    for (let i = 0; i < structs.length; i++) {
+                        const typeNode = structs[i].getElementsByTagName("GoldType")[0];
+                        if (typeNode && typeNode.textContent === 'REF') {
+                            goldData = {
+                                Buy: structs[i].getElementsByTagName("Buy")[0]?.textContent,
+                                Sell: structs[i].getElementsByTagName("Sell")[0]?.textContent,
+                                TimeUpdate: structs[i].getElementsByTagName("TimeUpdate")[0]?.textContent,
+                                StrTimeUpdate: structs[i].getElementsByTagName("StrTimeUpdate")[0]?.textContent
+                            };
+                            break;
+                        }
+                    }
+                    
+                    // แผนสำรอง: ถ้าหา GoldType=REF ไม่เจอ ให้ดึงตัวที่ 2 มาใช้งาน
+                    if (!goldData && structs.length > 1) {
+                        goldData = {
+                            Buy: structs[1].getElementsByTagName("Buy")[0]?.textContent,
+                            Sell: structs[1].getElementsByTagName("Sell")[0]?.textContent,
+                            TimeUpdate: structs[1].getElementsByTagName("TimeUpdate")[0]?.textContent,
+                            StrTimeUpdate: structs[1].getElementsByTagName("StrTimeUpdate")[0]?.textContent
+                        };
+                    }
                 }
+
+                // ถ้าไม่มีข้อมูลเลย ให้หยุดการทำงาน
+                if (!goldData) return;
+
+                // ดึงค่าตัวเลขออกมาจากฟิลด์ Buy / Sell (ลบเครื่องหมายจุลภาคทิ้ง)
+                const baseBuy = parseFloat(String(goldData.Buy || '').replace(/,/g, '')) || 0;
+                const baseSell = parseFloat(String(goldData.Sell || '').replace(/,/g, '')) || 0;
+                const modifiedBuy = baseBuy + 1500;
+
+                // แสดงผลหน้าจอ
+                document.getElementById('bar-buy').innerText = Math.round(baseBuy).toLocaleString();
+                document.getElementById('bar-sell').innerText = Math.round(baseSell).toLocaleString();
+                document.getElementById('buy-raw').innerText = Math.round(baseBuy).toLocaleString();
+                document.getElementById('buy-mod').innerText = Math.round(modifiedBuy).toLocaleString();
+
+                // อัปเดตเวลาล่าสุด
+                if (goldData.StrTimeUpdate && goldData.StrTimeUpdate.trim() !== '') {
+                    document.getElementById('last-update').innerText = "อัปเดตข้อมูลล่าสุด: " + goldData.StrTimeUpdate;
+                } else if (goldData.TimeUpdate) {
+                    const dateObj = new Date(goldData.TimeUpdate);
+                    const dateThai = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const timeStr = dateObj.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) + " น.";
+                    document.getElementById('last-update').innerText = `อัปเดตข้อมูลล่าสุด: ${dateThai} เวลา ${timeStr}`;
+                }
+
+                // สั่งคำนวณตาราง
+                renderTable('grid-raw', baseBuy);
+                renderTable('grid-mod', modifiedBuy);
+                
             } catch (e) { 
                 console.error("Error fetching gold data:", e); 
             }
@@ -229,9 +262,9 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen'+num).classList.add('active');
             
-            if (num === 2) setTimeout(() => switchToScreen(3), 90000); // โชว์หน้า 2 ไป 90 วิ
-            else if (num === 3) setTimeout(() => switchToScreen(1), 90000); // โชว์หน้า 3 ไป 90 วิ
-            else playMedia(); // กลับมาหน้า 1 เริ่มเล่นสื่อ
+            if (num === 2) setTimeout(() => switchToScreen(3), 90000); 
+            else if (num === 3) setTimeout(() => switchToScreen(1), 90000); 
+            else playMedia(); 
         }
 
         setInterval(fetchGoldData, 300000);
